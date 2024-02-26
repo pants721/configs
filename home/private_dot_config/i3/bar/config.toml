@@ -1,0 +1,56 @@
+icons_format = "{icon}"
+
+[theme]
+theme = "plain"
+
+[icons]
+icons = "material-nf"
+[icons.overrides]
+# bat = ["|E|", "|_|", "|=|", "|F|"]
+# bat_charging = "|^| "
+# backlight = "*"
+
+[[block]]
+block = "music"
+format = " $icon {$combo.str(max_w:20,rot_interval:0.5) |}"
+interface_name_exclude = [".*kdeconnect.*", "mpd"]
+[[block.click]]
+button = "left"
+action = "play_pause"
+
+[[block]]
+block = "backlight"
+device = "acpi_video0"
+
+[[block]]
+block = "battery"
+format = " $icon $percentage "
+
+# [[block]]
+# block = "cpu"
+
+[[block]]
+block = "disk_space"
+path = "/"
+info_type = "available"
+alert_unit = "GB"
+interval = 20
+warning = 20.0
+alert = 10.0
+format = " $icon storage: $available.eng(w:2) "
+
+# [[block]]
+# block = "memory"
+# format = " $icon $mem_total_used_percents.eng(w:2) "
+# format_alt = " $icon_swap $swap_used_percents.eng(w:2) "
+
+[[block]]
+block = "sound"
+[[block.click]]
+button = "left"
+cmd = "pavucontrol"
+
+[[block]]
+block = "time"
+interval = 5
+format = " $timestamp.datetime(f:'%a %m/%d %I:%M %p') "

@@ -1,0 +1,40 @@
+import = ["~/.config/alacritty/base16-gruvbox-dark-hard.toml"]
+live_config_reload = true
+
+[env]
+# TERM = "tmux-256color"
+TERM = "xterm-256color"
+
+[window]
+decorations = "full"
+dynamic_padding = true
+# opacity = 0.8
+# title = "HELP HELP ME HELP"
+dynamic_title = true
+
+[window.dimensions]
+columns = 180
+lines = 45
+
+[scrolling]
+history = 12000
+[font]
+size = 20
+
+[font.normal]
+# family = "jetbrainsmono"
+family = "firacode"
+# family = "monaspace krypton var"
+# family = "hack"
+# family = "roboto mono"
+# style = "bold"
+# family = "courier prime"
+# family = "iosevka term"
+# family = "source code pro"
+# family = "terminus (ttf)"
+# family = "noto sans mono"
+
+[shell]
+args = ["-l", "-c", "tmux attach || tmux"]
+program = "/bin/zsh"
+
