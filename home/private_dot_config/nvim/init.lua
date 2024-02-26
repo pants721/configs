@@ -500,7 +500,7 @@ require("lazy").setup({
 	},
 	-- Find files quickly
 	{
-		"ThePrimeagen/",
+		"ThePrimeagen/harpoon",
 		config = function() 
 			vim.keymap.set("n", "<leader>a", require("harpoon.mark").add_file)
 			vim.keymap.set("n", "<leader>h", require("harpoon.ui").toggle_quick_menu)
