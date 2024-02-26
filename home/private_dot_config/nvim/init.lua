@@ -38,14 +38,14 @@ vim.keymap.set('n', '<leader>w', '<cmd>w<cr>')
 -- make missing : less annoying
 vim.keymap.set('n', ';', ':')
 -- jk as Esc
--- vim.keymap.set('i', 'jk', '<Esc>')
--- vim.keymap.set('v', 'jk', '<Esc>')
--- vim.keymap.set('s', 'jk', '<Esc>')
--- vim.keymap.set('x', 'jk', '<Esc>')
--- vim.keymap.set('c', 'jk', '<Esc>')
--- vim.keymap.set('o', 'jk', '<Esc>')
--- vim.keymap.set('l', 'jk', '<Esc>')
--- vim.keymap.set('t', 'jk', '<Esc>')
+vim.keymap.set('i', 'jk', '<Esc>')
+vim.keymap.set('v', 'jk', '<Esc>')
+vim.keymap.set('s', 'jk', '<Esc>')
+vim.keymap.set('x', 'jk', '<Esc>')
+vim.keymap.set('c', 'jk', '<Esc>')
+vim.keymap.set('o', 'jk', '<Esc>')
+vim.keymap.set('l', 'jk', '<Esc>')
+vim.keymap.set('t', 'jk', '<Esc>')
 -- Ctrl+j and Ctrl+k as Esc
 vim.keymap.set('n', '<C-j>', '<Esc>')
 vim.keymap.set('i', '<C-j>', '<Esc>')
@@ -376,14 +376,14 @@ require("lazy").setup({
 		dependencies = { 'nvim-lua/plenary.nvim' },
 		config = function()
 			require("telescope").setup {
-				pickers = {
-					find_files = {
-						theme = "ivy",
-					},
-					live_grep = {
-						theme = "ivy",
-					}
-				}
+				-- pickers = {
+				-- 	find_files = {
+				-- 		theme = "ivy",
+				-- 	},
+				-- 	live_grep = {
+				-- 		theme = "ivy",
+				-- 	}
+				-- }
 			}
 			local builtin = require("telescope.builtin")
 			vim.keymap.set("n", "<leader>ff", builtin.find_files, {})
@@ -498,4 +498,17 @@ require("lazy").setup({
 		"m4xshen/autoclose.nvim",
 		opts = {},
 	},
+	-- Find files quickly
+	{
+		"ThePrimeagen/",
+		config = function() 
+			vim.keymap.set("n", "<leader>a", require("harpoon.mark").add_file)
+			vim.keymap.set("n", "<leader>h", require("harpoon.ui").toggle_quick_menu)
+
+			vim.keymap.set("n", "<leader>1", function() require("harpoon.ui").nav_file(1) end)
+			vim.keymap.set("n", "<leader>2", function() require("harpoon.ui").nav_file(2) end)
+			vim.keymap.set("n", "<leader>3", function() require("harpoon.ui").nav_file(3) end)
+			vim.keymap.set("n", "<leader>4", function() require("harpoon.ui").nav_file(4) end)
+		end
+	}
 })
