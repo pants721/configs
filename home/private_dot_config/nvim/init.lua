@@ -76,13 +76,6 @@ vim.keymap.set('v', '<C-h>', '<cmd>nohlsearch<cr>')
 vim.keymap.set('n', '<C-h>', '<cmd>nohlsearch<cr>')
 -- <leader><leader> toggles between buffers
 vim.keymap.set('n', '<leader><leader>', '<c-^>')
--- no arrow keys --- force yourself to use the home row
-vim.keymap.set('n', '<up>', '<nop>')
-vim.keymap.set('n', '<down>', '<nop>')
-vim.keymap.set('i', '<up>', '<nop>')
-vim.keymap.set('i', '<down>', '<nop>')
-vim.keymap.set('i', '<left>', '<nop>')
-vim.keymap.set('i', '<right>', '<nop>')
 -- let the left and right arrows be useful: they can switch buffers
 vim.keymap.set('n', '<left>', ':bp<cr>')
 vim.keymap.set('n', '<right>', ':bn<cr>')
@@ -181,6 +174,20 @@ require("lazy").setup({
 		'notjedi/nvim-rooter.lua',
 		config = function()
 			require('nvim-rooter').setup()
+		end
+	},
+	-- Version control
+	{
+		"NeogitOrg/neogit",
+		dependencies = {
+			"nvim-lua/plenary.nvim",         -- required
+			"sindrets/diffview.nvim",        -- optional - Diff integration
+			"nvim-telescope/telescope.nvim", -- optional
+		},
+		config = function()
+			require('neogit').setup {}
+			vim.keymap.set('n', '<leader>gg', ":Neogit<cr>", {silent = true})
+			vim.keymap.set('n', '<leader>gc', ":Neogit commit<cr>", {silent = true})
 		end
 	},
 	-- LSP
