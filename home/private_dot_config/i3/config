@@ -80,7 +80,7 @@ bindsym $mod+w layout tabbed
 bindsym $mod+q layout toggle split
 
 # toggle tiling / floating
-bindsym $mod+Shift+space floating toggle
+# bindsym $mod+Shift+space floating toggle
 
 # change focus between tiling / floating windows
 bindsym $mod+space focus mode_toggle
@@ -196,3 +196,4 @@ bindsym $mod+c exec ~/scripts/mouse.sh
 for_window [class=".*"] border pixel 1
 
 smart_borders on
+bindsym --release $mod+Shift+s exec import ~/screenshot.png
