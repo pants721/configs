@@ -32,6 +32,17 @@ else
   export EDITOR='nvim'
 fi
 
+if command -v eza > /dev/null; then
+	alias l="eza"	
+	alias ls="eza"
+	alias ll="eza -l"
+	alias lll="eza -la"
+else
+	alias l="ls"	
+	alias ll="ls -l"
+	alias lll="ls -la"
+fi
+
 alias n="nvim"
 alias vim="nvim"
 alias lamevim="bash vim"
