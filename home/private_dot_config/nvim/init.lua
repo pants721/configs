@@ -132,9 +132,17 @@ require("lazy").setup({
 	},
 	{
 		'nvim-lualine/lualine.nvim',
-		dependencies = { 'nvim-tree/nvim-web-devicons' },
+		dependencies = { 
+			'nvim-tree/nvim-web-devicons',
+			'arkav/lualine-lsp-progress',
+		},
 		config = function()
 			require('lualine').setup {
+				sections = {
+					lualine_c = {
+						'lsp_progress'
+					}
+				},
 				options = {
 					icons_enabled = false,
 					theme = 'powerline',
@@ -161,12 +169,12 @@ require("lazy").setup({
 	--     end
 	-- },
 	-- better %
-	{
-		'andymass/vim-matchup',
-		config = function()
-			vim.g.matchup_matchparen_offscreen = { method = "popup" }
-		end
-	},
+	-- {
+	-- 	'andymass/vim-matchup',
+	-- 	config = function()
+	-- 		vim.g.matchup_matchparen_offscreen = { method = "popup" }
+	-- 	end
+	-- },
 	-- auto-cd to root of git project
 	-- 'airblade/vim-rooter'
 	{
@@ -418,18 +426,6 @@ require("lazy").setup({
 			"nvim-treesitter/nvim-treesitter",
 		},
 	},
-	-- rust
-	{
-		'rust-lang/rust.vim',
-		ft = { "rust" },
-		config = function()
-			vim.g.rustfmt_autosave = 1
-			vim.g.rustfmt_emit_files = 1
-			vim.g.rustfmt_fail_silently = 0
-			vim.g.rust_clip_command = 'wl-copy'
-		end
-	},
-	-- markdown
 	{
 		'plasticboy/vim-markdown',
 		ft = { "markdown" },
