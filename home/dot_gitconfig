@@ -1,0 +1,29 @@
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[user]
+	name = Lucas Newcomb
+	email = pantsbabyy@gmail.com
+
+[ui "color"]
+	ui = always
+
+[color]
+	ui = always
+[merge]
+	tool = nvim -d
+[alias]
+	c = commit
+	s = status
+	st = status
+	lg = log --oneline
+	last = log -1 HEAD
+	f = push --force-with-lease
+	ss = "!f() { git stash show stash^{/$*} -p; }; f"
+	sa = "!f() { git stash apply stash^{/$*}; }; f"
+	sl = stash list
+[github]
+	user = pants721
+[diff]
+	algorithm = patience
+	compactionHeuristic = true
