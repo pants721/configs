@@ -133,7 +133,8 @@ require("lazy").setup({
 			require('lualine').setup {
 				sections = {
 					lualine_c = {
-						'lsp_progress'
+						'filename',
+						'lsp_progress',
 					}
 				},
 				options = {
@@ -196,6 +197,7 @@ require("lazy").setup({
 		dependencies = {
 			"williamboman/mason-lspconfig.nvim",
 			'neovim/nvim-lspconfig',
+			"hrsh7th/cmp-nvim-lsp",
 		},
 		config = function()
 			-- Setup language servers.
@@ -203,27 +205,29 @@ require("lazy").setup({
 			require("mason-lspconfig").setup()
 			require("mason-lspconfig").setup_handlers {
 				function(server_name) -- default handler (optional)
-					require("lspconfig")[server_name].setup {}
+					require("lspconfig")[server_name].setup {
+						capabilities = require('cmp_nvim_lsp').default_capabilities()
+					}
 				end,
 			}
 			local lspconfig = require('lspconfig')
 
 			-- Rust
-			lspconfig.rust_analyzer.setup {
-				-- Server-specific settings. See `:help lspconfig-setup`
-				settings = {
-					["rust-analyzer"] = {
-						cargo = {
-							allFeatures = true,
-						},
-						completion = {
-							postfix = {
-								enable = false,
-							},
-						},
-					},
-				},
-			}
+			-- lspconfig.rust_analyzer.setup {
+			-- 	-- Server-specific settings. See `:help lspconfig-setup`
+			-- 	settings = {
+			-- 		["rust-analyzer"] = {
+			-- 			cargo = {
+			-- 				allFeatures = true,
+			-- 			},
+			-- 			completion = {
+			-- 				postfix = {
+			-- 					enable = false,
+			-- 				},
+			-- 			},
+			-- 		},
+			-- 	},
+			-- }
 
 			-- Bash LSP
 			local configs = require 'lspconfig.configs'
@@ -309,10 +313,12 @@ require("lazy").setup({
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-path",
 			"L3MON4D3/LuaSnip",
+			"onsails/lspkind.nvim",
 		},
 		config = function()
 			local cmp = require 'cmp'
 			local luasnip = require("luasnip")
+			local lspkind = require("lspkind")
 			local has_words_before = function()
 				unpack = unpack or table.unpack
 				local line, col = unpack(vim.api.nvim_win_get_cursor(0))
@@ -321,6 +327,18 @@ require("lazy").setup({
 			end
 
 			cmp.setup({
+				formatting = {
+					format = lspkind.cmp_format({
+						mode = "symbol_text",
+						menu = ({
+							buffer = "[Buffer]",
+							nvim_lsp = "[LSP]",
+							luasnip = "[LuaSnip]",
+							nvim_lua = "[Lua]",
+							latex_symbols = "[Latex]",
+						})
+					}),
+				},
 				snippet = {
 					expand = function(args)
 						require('luasnip').lsp_expand(args.body)
@@ -504,8 +522,8 @@ require("lazy").setup({
 	-- Find files quickly
 	{
 		"ThePrimeagen/harpoon",
-		config = function() 
-			vim.keymap.set("n", "<leader>a", require("harpoon.mark").add_file)
+		config = function()
+			vim.keymap.set("n", "<leader>q", require("harpoon.mark").add_file)
 			vim.keymap.set("n", "<leader>h", require("harpoon.ui").toggle_quick_menu)
 
 			vim.keymap.set("n", "<leader>1", function() require("harpoon.ui").nav_file(1) end)
