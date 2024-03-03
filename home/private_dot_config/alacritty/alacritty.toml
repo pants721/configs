@@ -6,26 +6,24 @@ live_config_reload = true
 TERM = "xterm-256color"
 
 [window]
-decorations = "full"
-dynamic_padding = true
+decorations = "none"
+dynamic_padding = false
 # opacity = 0.8
 # title = "HELP HELP ME HELP"
 dynamic_title = true
 
-[window.dimensions]
-columns = 180
-lines = 45
-
 [scrolling]
 history = 12000
+multiplier = 1
+
 [font]
 size = 20
 
 [font.normal]
 # family = "jetbrainsmono"
-family = "firacode"
+# family = "firacode"
 # family = "monaspace krypton var"
-# family = "hack"
+family = "hack"
 # family = "roboto mono"
 # style = "bold"
 # family = "courier prime"
