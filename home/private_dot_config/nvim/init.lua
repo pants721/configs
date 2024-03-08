@@ -39,12 +39,6 @@ vim.keymap.set('n', '<leader>w', '<cmd>w<cr>')
 vim.keymap.set('n', ';', ':')
 -- jk as Esc
 vim.keymap.set('i', 'jk', '<Esc>')
-vim.keymap.set('v', 'jk', '<Esc>')
-vim.keymap.set('s', 'jk', '<Esc>')
-vim.keymap.set('x', 'jk', '<Esc>')
-vim.keymap.set('c', 'jk', '<Esc>')
-vim.keymap.set('o', 'jk', '<Esc>')
-vim.keymap.set('l', 'jk', '<Esc>')
 vim.keymap.set('t', 'jk', '<Esc>')
 -- Ctrl+j and Ctrl+k as Esc
 vim.keymap.set('n', '<C-j>', '<Esc>')
@@ -115,12 +109,24 @@ require("lazy").setup({
 	-- 	end
 	-- },
 	{
-		"RRethy/base16-nvim",
+		"wincent/base16-nvim",
 		lazy = false,
 		priority = 1000,
 		config = function()
 			vim.cmd([[colorscheme base16-gruvbox-dark-hard]])
 			vim.o.background = 'dark'
+			-- XXX: hi Normal ctermbg=NONE
+			-- Make comments more prominent -- they are important.
+			local bools = vim.api.nvim_get_hl(0, { name = 'Boolean' })
+			vim.api.nvim_set_hl(0, 'Comment', bools)
+			-- Make it clearly visible which argument we're at.
+			local marked = vim.api.nvim_get_hl(0, { name = 'PMenu' })
+			vim.api.nvim_set_hl(0, 'LspSignatureActiveParameter', { fg = marked.fg, bg = marked.bg, ctermfg = marked.ctermfg, ctermbg = marked.ctermbg, bold = true })
+			-- XXX
+			-- Would be nice to customize the highlighting of warnings and the like to make
+			-- them less glaring. But alas
+			-- https://github.com/nvim-lua/lsp_extensions.nvim/issues/21
+			-- call Base16hi("CocHintSign", g:base16_gui03, "", g:base16_cterm03, "", "", "")
 		end
 	},
 	{
