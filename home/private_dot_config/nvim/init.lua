@@ -10,7 +10,7 @@ local tabwidth = 4
 vim.opt.shiftwidth = tabwidth
 vim.opt.softtabstop = tabwidth
 vim.opt.tabstop = tabwidth
-vim.opt.expandtab = false
+vim.opt.expandtab = true
 
 vim.opt.ignorecase = true
 
@@ -23,7 +23,7 @@ vim.opt.signcolumn = 'yes'
 vim.opt.guicursor = 'i:block'
 
 vim.cmd "set termguicolors"
-vim.opt.clipboard = "unnamedplus"
+-- vim.opt.clipboard = "unnamedplus"
 
 -------------------------------------------------------------------------------
 --
@@ -73,9 +73,6 @@ vim.keymap.set('n', '<leader><leader>', '<c-^>')
 -- let the left and right arrows be useful: they can switch buffers
 vim.keymap.set('n', '<left>', ':bp<cr>')
 vim.keymap.set('n', '<right>', ':bn<cr>')
--- make j and k move by visual line, not actual line, when text is soft-wrapped
-vim.keymap.set('n', 'j', 'gj')
-vim.keymap.set('n', 'k', 'gk')
 
 -------------------------------------------------------------------------------
 --
@@ -99,36 +96,17 @@ vim.opt.rtp:prepend(lazypath)
 
 -- actual plugins
 require("lazy").setup({
-	-- {
-	-- 	"morhetz/gruvbox",
-	-- 	lazy = false,
-	-- 	priority = 1000,
-	-- 	config = function()
-	-- 		vim.cmd([[colorscheme gruvbox]])
-	-- 		vim.o.background = 'dark'
-	-- 	end
-	-- },
-	{
+	{ 
 		"wincent/base16-nvim",
-		lazy = false,
 		priority = 1000,
 		config = function()
 			vim.cmd([[colorscheme base16-gruvbox-dark-hard]])
 			vim.o.background = 'dark'
-			-- XXX: hi Normal ctermbg=NONE
-			-- Make comments more prominent -- they are important.
-			local bools = vim.api.nvim_get_hl(0, { name = 'Boolean' })
-			vim.api.nvim_set_hl(0, 'Comment', bools)
-			-- Make it clearly visible which argument we're at.
-			local marked = vim.api.nvim_get_hl(0, { name = 'PMenu' })
-			vim.api.nvim_set_hl(0, 'LspSignatureActiveParameter', { fg = marked.fg, bg = marked.bg, ctermfg = marked.ctermfg, ctermbg = marked.ctermbg, bold = true })
-			-- XXX
-			-- Would be nice to customize the highlighting of warnings and the like to make
-			-- them less glaring. But alas
-			-- https://github.com/nvim-lua/lsp_extensions.nvim/issues/21
-			-- call Base16hi("CocHintSign", g:base16_gui03, "", g:base16_cterm03, "", "", "")
 		end
 	},
+    {
+        "xiyaowong/transparent.nvim",
+    },
 	{
 		'nvim-lualine/lualine.nvim',
 		dependencies = { 
@@ -160,30 +138,6 @@ require("lazy").setup({
 			}
 		end,
 	},
-
-	-- quick navigation
-	-- {
-	--     'ggandor/leap.nvim',
-	--     config = function()
-	--         require('leap').create_default_mappings()
-	--     end
-	-- },
-	-- better %
-	-- {
-	-- 	'andymass/vim-matchup',
-	-- 	config = function()
-	-- 		vim.g.matchup_matchparen_offscreen = { method = "popup" }
-	-- 	end
-	-- },
-	-- auto-cd to root of git project
-	-- 'airblade/vim-rooter'
-	{
-		'notjedi/nvim-rooter.lua',
-		config = function()
-			require('nvim-rooter').setup()
-		end
-	},
-	-- Version control
 	{
 		"NeogitOrg/neogit",
 		dependencies = {
@@ -218,22 +172,6 @@ require("lazy").setup({
 			}
 			local lspconfig = require('lspconfig')
 
-			-- Rust
-			-- lspconfig.rust_analyzer.setup {
-			-- 	-- Server-specific settings. See `:help lspconfig-setup`
-			-- 	settings = {
-			-- 		["rust-analyzer"] = {
-			-- 			cargo = {
-			-- 				allFeatures = true,
-			-- 			},
-			-- 			completion = {
-			-- 				postfix = {
-			-- 					enable = false,
-			-- 				},
-			-- 			},
-			-- 		},
-			-- 	},
-			-- }
 
 			-- Bash LSP
 			local configs = require 'lspconfig.configs'
@@ -322,7 +260,12 @@ require("lazy").setup({
 			"onsails/lspkind.nvim",
 		},
 		config = function()
-			local cmp = require 'cmp'
+			local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+			local cmp = require('cmp')
+			cmp.event:on(
+			'confirm_done',
+			cmp_autopairs.on_confirm_done()
+			)
 			local luasnip = require("luasnip")
 			local lspkind = require("lspkind")
 			local has_words_before = function()
@@ -447,34 +390,6 @@ require("lazy").setup({
 		end
 	},
 	-- language support
-	-- toml
-	'cespare/vim-toml',
-	-- yaml
-	{
-		"cuducos/yaml.nvim",
-		ft = { "yaml" },
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter",
-		},
-	},
-	{
-		'plasticboy/vim-markdown',
-		ft = { "markdown" },
-		dependencies = {
-			'godlygeek/tabular',
-		},
-		config = function()
-			-- never ever fold!
-			vim.g.vim_markdown_folding_disabled = 1
-			-- support front-matter in .md files
-			vim.g.vim_markdown_frontmatter = 1
-			-- 'o' on a list item should insert at same level
-			vim.g.vim_markdown_new_list_item_indent = 0
-			-- don't add bullets when wrapping:
-			-- https://github.com/preservim/vim-markdown/issues/232
-			vim.g.vim_markdown_auto_insert_bullets = 0
-		end
-	},
 	-- Commentary
 	{
 		'numToStr/Comment.nvim',
@@ -483,47 +398,37 @@ require("lazy").setup({
 		},
 		lazy = false,
 	},
-	-- {
-	-- 	'nvim-treesitter/nvim-treesitter',
-	-- 	config = function()
-	-- 		require'nvim-treesitter.configs'.setup {
-	-- 			-- A list of parser names, or "all" (the five listed parsers should always be installed)
-	-- 			ensure_installed = { "c", "lua", "vim", "cpp", "python", "rust" },
-	-- 			-- Install parsers synchronously (only applied to `ensure_installed`)
-	-- 			sync_install = false,
-	-- 			-- Automatically install missing parsers when entering buffer
-	-- 			-- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
-	-- 			auto_install = true,
-	-- 			highlight = {
-	-- 				enable = true,
-	--
-	-- 				-- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
-	-- 				-- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
-	-- 				-- the name of the parser)
-	-- 				-- list of language that will be disabled
-	-- 				-- disable = { "c", "rust" },
-	-- 				-- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
-	-- 				disable = function(lang, buf)
-	-- 					local max_filesize = 100 * 1024 -- 100 KB
-	-- 					local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-	-- 					if ok and stats and stats.size > max_filesize then
-	-- 						return true
-	-- 					end
-	-- 				end,
-	--
-	-- 				-- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-	-- 				-- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-	-- 				-- Using this option may slow down your editor, and you may see some duplicate highlights.
-	-- 				-- Instead of true it can also be a list of languages
-	-- 				additional_vim_regex_highlighting = false,
-	-- 			},
-	-- 		}
-	-- 	end
-	-- },
+	{
+		'nvim-treesitter/nvim-treesitter-context',
+		config = true,
+	},
+	{
+		'nvim-treesitter/nvim-treesitter',
+		config = function()
+			require'nvim-treesitter.configs'.setup {
+				ensure_installed = { "c", "lua", "vim", "cpp", "python", "rust", "markdown", "toml" },
+				sync_install = false,
+				auto_install = true,
+				highlight = {
+					enable = true,
+					disable = function(lang, buf)
+						local max_filesize = 100 * 1024 -- 100 KB
+						local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+						if ok and stats and stats.size > max_filesize then
+							return true
+						end
+					end,
+
+					additional_vim_regex_highlighting = false,
+				},
+			}
+		end
+	},
 	-- Autoclose ur brackets
 	{
-		"m4xshen/autoclose.nvim",
-		opts = {},
+        'windwp/nvim-autopairs',
+        event = "InsertEnter",
+		config = true
 	},
 	-- Find files quickly
 	{
@@ -537,5 +442,14 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>3", function() require("harpoon.ui").nav_file(3) end)
 			vim.keymap.set("n", "<leader>4", function() require("harpoon.ui").nav_file(4) end)
 		end
-	}
+	},
+	{
+		"folke/todo-comments.nvim",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		opts = {}
+	},
+    {
+        "lewis6991/gitsigns.nvim",
+        config = true,
+    },
 })
