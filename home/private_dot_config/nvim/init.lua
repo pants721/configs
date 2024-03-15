@@ -47,13 +47,9 @@ vim.keymap.set('n', '<leader>w', '<cmd>w<cr>')
 vim.keymap.set('n', ';', ':')
 -- jk as Esc
 vim.keymap.set('i', 'jk', '<Esc>')
-vim.keymap.set('t', 'jk', '<Esc>')
 vim.keymap.set('i', 'Jk', '<Esc>')
-vim.keymap.set('t', 'Jk', '<Esc>')
 vim.keymap.set('i', 'jK', '<Esc>')
-vim.keymap.set('t', 'jK', '<Esc>')
 vim.keymap.set('i', 'JK', '<Esc>')
-vim.keymap.set('t', 'JK', '<Esc>')
 -- Jump to start and end of line using the home row keys
 vim.keymap.set('', 'H', '^')
 vim.keymap.set('', 'L', '$')
@@ -133,7 +129,9 @@ require("lazy").setup({
 			"nvim-telescope/telescope.nvim", -- optional
 		},
 		config = function()
-			require('neogit').setup {}
+			require('neogit').setup {
+                kind = "auto",
+            }
 			vim.keymap.set('n', '<leader>gg', ":Neogit<cr>", {silent = true})
 			vim.keymap.set('n', '<leader>gc', ":Neogit commit<cr>", {silent = true})
 		end
