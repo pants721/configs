@@ -22,8 +22,16 @@ vim.opt.colorcolumn = '80'
 vim.opt.signcolumn = 'yes'
 vim.opt.guicursor = 'i:block'
 
+-- disable auto comment on new line
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "*",
+  callback = function()
+    vim.opt_local.formatoptions:remove({ 'r', 'o' })
+  end,
+})
+
 vim.cmd "set termguicolors"
--- vim.opt.clipboard = "unnamedplus"
+vim.opt.clipboard = "unnamedplus"
 
 -------------------------------------------------------------------------------
 --
@@ -40,28 +48,12 @@ vim.keymap.set('n', ';', ':')
 -- jk as Esc
 vim.keymap.set('i', 'jk', '<Esc>')
 vim.keymap.set('t', 'jk', '<Esc>')
--- Ctrl+j and Ctrl+k as Esc
-vim.keymap.set('n', '<C-j>', '<Esc>')
-vim.keymap.set('i', '<C-j>', '<Esc>')
-vim.keymap.set('v', '<C-j>', '<Esc>')
-vim.keymap.set('s', '<C-j>', '<Esc>')
-vim.keymap.set('x', '<C-j>', '<Esc>')
-vim.keymap.set('c', '<C-j>', '<Esc>')
-vim.keymap.set('o', '<C-j>', '<Esc>')
-vim.keymap.set('l', '<C-j>', '<Esc>')
-vim.keymap.set('t', '<C-j>', '<Esc>')
--- Ctrl-j is a little awkward unfortunately:
--- https://github.com/neovim/neovim/issues/5916
--- So we also map Ctrl+k
-vim.keymap.set('n', '<C-k>', '<Esc>')
-vim.keymap.set('i', '<C-k>', '<Esc>')
-vim.keymap.set('v', '<C-k>', '<Esc>')
-vim.keymap.set('s', '<C-k>', '<Esc>')
-vim.keymap.set('x', '<C-k>', '<Esc>')
-vim.keymap.set('c', '<C-k>', '<Esc>')
-vim.keymap.set('o', '<C-k>', '<Esc>')
-vim.keymap.set('l', '<C-k>', '<Esc>')
-vim.keymap.set('t', '<C-k>', '<Esc>')
+vim.keymap.set('i', 'Jk', '<Esc>')
+vim.keymap.set('t', 'Jk', '<Esc>')
+vim.keymap.set('i', 'jK', '<Esc>')
+vim.keymap.set('t', 'jK', '<Esc>')
+vim.keymap.set('i', 'JK', '<Esc>')
+vim.keymap.set('t', 'JK', '<Esc>')
 -- Jump to start and end of line using the home row keys
 vim.keymap.set('', 'H', '^')
 vim.keymap.set('', 'L', '$')
@@ -73,6 +65,8 @@ vim.keymap.set('n', '<leader><leader>', '<c-^>')
 -- let the left and right arrows be useful: they can switch buffers
 vim.keymap.set('n', '<left>', ':bp<cr>')
 vim.keymap.set('n', '<right>', ':bn<cr>')
+
+vim.keymap.set('n', '<C-i>', '<C-a>')
 
 -------------------------------------------------------------------------------
 --
@@ -96,48 +90,41 @@ vim.opt.rtp:prepend(lazypath)
 
 -- actual plugins
 require("lazy").setup({
-	{ 
-		"wincent/base16-nvim",
-		priority = 1000,
-		config = function()
-			vim.cmd([[colorscheme base16-gruvbox-dark-hard]])
-			vim.o.background = 'dark'
-		end
-	},
-    {
-        "xiyaowong/transparent.nvim",
+    { 
+        "ellisonleao/gruvbox.nvim",
+        priority = 1000,
+        config = function()
+            vim.cmd([[colorscheme gruvbox]])
+            vim.o.background = 'dark'
+        end
     },
-	{
-		'nvim-lualine/lualine.nvim',
-		dependencies = { 
-			'nvim-tree/nvim-web-devicons',
-			'arkav/lualine-lsp-progress',
-		},
-		config = function()
-			require('lualine').setup {
-				sections = {
-					lualine_c = {
-						'filename',
-						'lsp_progress',
-					}
-				},
-				options = {
-					icons_enabled = false,
-					theme = 'powerline',
-					-- component_separators = { left = '', right = ''},
-					-- section_separators = { left = '', right = ''},
-					component_separators = { left = '', right = '' },
-					section_separators = { left = '', right = '' },
-					disabled_filetypes = {
-						statusline = {},
-						winbar = {},
-					},
-					always_divide_middle = true,
-					globalstatus = true,
-				},
-			}
-		end,
-	},
+    {
+        'nvim-lualine/lualine.nvim',
+        dependencies = { 
+            'nvim-tree/nvim-web-devicons',
+            'arkav/lualine-lsp-progress',
+        },
+        config = function()
+            require('lualine').setup {
+                sections = {
+                    lualine_c = {
+                        'filename',
+                        'lsp_progress',
+                    }
+                },
+                options = {
+                    icons_enabled = false,
+                    -- theme = 'powerline',
+                    -- component_separators = { left = '', right = ''},
+                    -- section_separators = { left = '', right = ''},
+                    component_separators = { left = '', right = '' },
+                    section_separators = { left = '', right = '' },
+                    always_divide_middle = true,
+                    globalstatus = true,
+                },
+            }
+        end,
+    },
 	{
 		"NeogitOrg/neogit",
 		dependencies = {
@@ -231,12 +218,6 @@ require("lazy").setup({
 
 					local client = vim.lsp.get_client_by_id(ev.data.client_id)
 
-					-- When https://neovim.io/doc/user/lsp.html#lsp-inlay_hint stabilizes
-					-- *and* there's some way to make it only apply to the current line.
-					-- if client.server_capabilities.inlayHintProvider then
-					--     vim.lsp.inlay_hint(ev.buf, true)
-					-- end
-
 					-- None of this semantics tokens business.
 					-- https://www.reddit.com/r/neovim/comments/143efmd/is_it_possible_to_disable_treesitter_completely/
 					client.server_capabilities.semanticTokensProvider = nil
@@ -258,14 +239,15 @@ require("lazy").setup({
 			"hrsh7th/cmp-path",
 			"L3MON4D3/LuaSnip",
 			"onsails/lspkind.nvim",
+            "windwp/nvim-autopairs",
 		},
 		config = function()
-			local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+            local cmp_autopairs = require('nvim-autopairs.completion.cmp')
 			local cmp = require('cmp')
-			cmp.event:on(
-			'confirm_done',
-			cmp_autopairs.on_confirm_done()
-			)
+            cmp.event:on(
+                'confirm_done',
+                cmp_autopairs.on_confirm_done()
+            )
 			local luasnip = require("luasnip")
 			local lspkind = require("lspkind")
 			local has_words_before = function()
@@ -399,18 +381,19 @@ require("lazy").setup({
 		lazy = false,
 	},
 	{
-		'nvim-treesitter/nvim-treesitter-context',
-		config = true,
-	},
-	{
-		'nvim-treesitter/nvim-treesitter',
+        'nvim-treesitter/nvim-treesitter',
+		dependencies = { 
+            'nvim-treesitter/nvim-treesitter-refactor',
+            'windwp/nvim-ts-autotag',
+        },
 		config = function()
+            vim.cmd('highlight TSParenthesis guifg=#ffffff') 
 			require'nvim-treesitter.configs'.setup {
 				ensure_installed = { "c", "lua", "vim", "cpp", "python", "rust", "markdown", "toml" },
 				sync_install = false,
 				auto_install = true,
 				highlight = {
-					enable = true,
+					enable = false,
 					disable = function(lang, buf)
 						local max_filesize = 100 * 1024 -- 100 KB
 						local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
@@ -421,15 +404,32 @@ require("lazy").setup({
 
 					additional_vim_regex_highlighting = false,
 				},
+                indent = {
+                    enable = true
+                },
+                refactor = {
+                    smart_rename = {
+                        enable = true,
+                        keymaps = {
+                            smart_rename = "grr",
+                        },
+                    },
+                },
+                autotag = {
+                    enable = true,
+                },
 			}
 		end
 	},
 	-- Autoclose ur brackets
-	{
+    {
         'windwp/nvim-autopairs',
         event = "InsertEnter",
-		config = true
-	},
+        opts = {
+            map_c_h = true,
+            map_c_w = true,
+        },
+    },
 	-- Find files quickly
 	{
 		"ThePrimeagen/harpoon",
@@ -451,5 +451,15 @@ require("lazy").setup({
     {
         "lewis6991/gitsigns.nvim",
         config = true,
+    },
+    {
+        "kylechui/nvim-surround",
+        version = "*", -- Use for stability; omit to use `main` branch for the latest features
+        event = "VeryLazy",
+        config = function()
+            require("nvim-surround").setup({
+                -- Configuration here, or leave empty to use defaults
+            })
+        end
     },
 })
