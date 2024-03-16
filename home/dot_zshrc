@@ -72,3 +72,5 @@ RPROMPT='%{%B%F{green}%}$vcs_info_msg_0_%{%b%F{reset}%}'
 PS1='${debian_chroot:+($debian_chroot)}%B%F{green}%n@%m%f:%F{blue}%~%f%b$ '
 
 alias cz="chezmoi"
+eval "$(zoxide init zsh)"
+alias lg="lazygit"
