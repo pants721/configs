@@ -1,0 +1,47 @@
+#!/usr/bin/python3
+
+import argparse
+
+def limit_line_length(text: str, max_length: int) -> str:
+    lines = []
+    curr = ""
+
+    for line in text.splitlines(keepends=True):
+        words = line.split()
+        for word in words:
+            if len(curr) + len(word) + 1 > max_length:
+                lines.append(curr)
+                curr = word
+            else:
+                curr += " " + word
+        lines.append(curr)
+        curr = ""
+    return "\n".join(lines)
+
+
+parser = argparse.ArgumentParser(
+    prog='Pants Markdown Formatter',
+    description='Formats my markdown files line length',
+)
+
+parser.add_argument('filename', help='file to format')
+parser.add_argument('-l', '--line-length', type=int, help='max line length',
+                    default=80)
+parser.add_argument('-d', '--dry-run', action='store_true')
+
+args = parser.parse_args()
+
+with open(args.filename, "r+") as f:
+    file_text = f.read()
+    f.seek(0)
+
+    formatted = limit_line_length(file_text, args.line_length)
+
+    if args.dry_run:
+        print(formatted)
+        f.close()
+        exit()
+    else:
+        f.write(formatted)
+        f.close()
+        exit()
