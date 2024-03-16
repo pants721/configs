@@ -218,7 +218,7 @@ require("lazy").setup({
 
 					-- None of this semantics tokens business.
 					-- https://www.reddit.com/r/neovim/comments/143efmd/is_it_possible_to_disable_treesitter_completely/
-					client.server_capabilities.semanticTokensProvider = nil
+					-- client.server_capabilities.semanticTokensProvider = nil
 				end,
 			})
 		end
@@ -391,7 +391,7 @@ require("lazy").setup({
 				sync_install = false,
 				auto_install = true,
 				highlight = {
-					enable = false,
+					enable = true,
 					disable = function(lang, buf)
 						local max_filesize = 100 * 1024 -- 100 KB
 						local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
