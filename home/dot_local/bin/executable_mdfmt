@@ -6,15 +6,15 @@ def limit_line_length(text: str, max_length: int) -> str:
     lines = []
     curr = ""
 
-    for line in text.splitlines(keepends=True):
+    for line in text.splitlines(True):
+        indent = len(line.removesuffix(line.lstrip()))
         words = line.split()
         for word in words:
             if len(curr) + len(word) + 1 > max_length:
                 lines.append(curr)
-                curr = word
-            else:
-                curr += " " + word
-        lines.append(curr)
+                curr = ""
+            curr += word + " "
+        lines.append((" " * indent) + curr.rstrip())
         curr = ""
     return "\n".join(lines)
 
