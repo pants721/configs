@@ -12,8 +12,8 @@ vim.opt.softtabstop = tabwidth
 vim.opt.tabstop = tabwidth
 vim.opt.expandtab = true
 
-vim.opt.spelllang = 'en_us'
-vim.opt.spell = true
+-- vim.opt.spelllang = 'en_us'
+-- vim.opt.spell = true
 
 vim.opt.ignorecase = true
 
@@ -35,6 +35,8 @@ vim.api.nvim_create_autocmd("FileType", {
 
 vim.cmd "set termguicolors"
 vim.opt.clipboard = "unnamedplus"
+
+vim.opt.background = "dark"
 
 -------------------------------------------------------------------------------
 --
@@ -89,17 +91,18 @@ vim.opt.rtp:prepend(lazypath)
 
 -- actual plugins
 require("lazy").setup({
-    { 
-        "ellisonleao/gruvbox.nvim",
+    {
+        "miikanissi/modus-themes.nvim",
         priority = 1000,
         config = function()
-            vim.cmd([[colorscheme gruvbox]])
+            vim.cmd([[colorscheme modus_vivendi]])
             vim.o.background = 'dark'
         end
     },
     {
         'nvim-lualine/lualine.nvim',
-        dependencies = { 
+        priority = 1000,
+        dependencies = {
             'nvim-tree/nvim-web-devicons',
             'arkav/lualine-lsp-progress',
         },
@@ -124,21 +127,22 @@ require("lazy").setup({
             }
         end,
     },
-	{
-		"NeogitOrg/neogit",
-		dependencies = {
-			"nvim-lua/plenary.nvim",         -- required
-			"sindrets/diffview.nvim",        -- optional - Diff integration
-			"nvim-telescope/telescope.nvim", -- optional
-		},
-		config = function()
-			require('neogit').setup {
-                kind = "auto",
+    -- git
+    {
+        "NeogitOrg/neogit",
+        dependencies = {
+            "nvim-lua/plenary.nvim",         -- required
+            "sindrets/diffview.nvim",        -- optional - Diff integration
+            "nvim-telescope/telescope.nvim", -- optional
+        },
+        config = function()
+            require('neogit').setup {
+                kind = "replace",
             }
-			vim.keymap.set('n', '<leader>gg', ":Neogit<cr>", {silent = true})
-			vim.keymap.set('n', '<leader>gc', ":Neogit commit<cr>", {silent = true})
-		end
-	},
+            vim.keymap.set('n', '<leader>gg', ":Neogit<cr>", {silent = true})
+            vim.keymap.set('n', '<leader>gc', ":Neogit commit<cr>", {silent = true})
+        end
+    },
 	-- LSP
 	{
 		"williamboman/mason.nvim",
@@ -335,43 +339,84 @@ require("lazy").setup({
 		end
 	},
 	-- find some files
-	{
-		'nvim-telescope/telescope.nvim',
-		tag = '0.1.5',
-		dependencies = { 'nvim-lua/plenary.nvim' },
-		config = function()
-			require("telescope").setup {
-				-- pickers = {
-				-- 	find_files = {
-				-- 		theme = "ivy",
-				-- 	},
-				-- 	live_grep = {
-				-- 		theme = "ivy",
-				-- 	}
-				-- }
-			}
-			local builtin = require("telescope.builtin")
-			vim.keymap.set("n", "<leader>ff", builtin.find_files, {})
-			vim.keymap.set("n", "<leader>fs", builtin.live_grep, {})
-			vim.keymap.set("n", "<leader>fb", builtin.buffers, {})
-			vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
-		end
-	},
+    {
+        "nvim-telescope/telescope-file-browser.nvim",
+        dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
+    },
+    {
+        'nvim-telescope/telescope-fzf-native.nvim',
+        build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build'
+    },
+    {
+        'nvim-telescope/telescope.nvim',
+        tag = '0.1.6',
+        dependencies = { 'nvim-lua/plenary.nvim' },
+        config = function()
+            require("telescope").setup {
+                defaults = {
+                    layout_config = {
+                        height = 10,
+                    },
+                    mappings = {
+                        i = {
+                            ["<Tab>"] = require("telescope.actions").move_selection_next,
+                            ["<S-Tab>"] = require("telescope.actions").move_selection_previous,
+                            ["<C-n>"] = require("telescope.actions").toggle_selection + require("telescope.actions").move_selection_worse,
+                            ["<C-p>"] = require("telescope.actions").toggle_selection + require("telescope.actions").move_selection_better,
+                        }
+                    }
+                },
+                pickers = {
+                    live_grep = {
+                        mappings = {
+                            i = { ["<c-space>"] = require("telescope.actions.generate").to_fuzzy_refine },
+                        },
+                    },
+                    find_files = {
+                        mappings = {
+                            i = {
+                                ["<c-space>"] = function(prompt_bufnr)
+                                    require("telescope.actions.generate").refine(prompt_bufnr, {
+                                        prompt_to_prefix = true,
+                                        sorter = false,
+                                    })
+                                end,
+                            },
+                        },
+                    },
+                }
+            }
+            require("telescope").load_extension "file_browser"
+            local builtin = require("telescope.builtin")
+            local themes = require('telescope.themes')
+            local opts = {
+                layout_config = {
+                    height = 10,
+                }
+            }
+            -- vim.keymap.set("n", "<leader>fj", ":Telescope file_browser path=%:p:h select_buffer=true<CR>", {silent=true})
+            vim.keymap.set("n", "<leader>fj", function() require "telescope".extensions.file_browser.file_browser(themes.get_ivy(opts)) end, {})
+            vim.keymap.set("n", "<leader>ff", function() builtin.find_files(themes.get_ivy(opts)) end, {})
+            vim.keymap.set("n", "<leader>fs", function() builtin.live_grep(themes.get_ivy(opts)) end, {})
+            vim.keymap.set("n", "<leader>fb", function() builtin.buffers(themes.get_ivy(opts)) end, {})
+            vim.keymap.set('n', '<leader>fh', function() builtin.help_tags(themes.get_ivy(opts)) end, {})
+        end
+    },
 	-- inline function signatures
-	{
-		"ray-x/lsp_signature.nvim",
-		event = "VeryLazy",
-		opts = {},
-		config = function(_, opts)
-			-- Get signatures (and _only_ signatures) when in argument lists.
-			require "lsp_signature".setup({
-				doc_lines = 0,
-				handler_opts = {
-					border = "none"
-				},
-			})
-		end
-	},
+	-- {
+	-- 	"ray-x/lsp_signature.nvim",
+	-- 	event = "VeryLazy",
+	-- 	opts = {},
+	-- 	config = function(_, opts)
+	-- 		-- Get signatures (and _only_ signatures) when in argument lists.
+	-- 		require "lsp_signature".setup({
+	-- 			doc_lines = 0,
+	-- 			handler_opts = {
+	-- 				border = "none"
+	-- 			},
+	-- 		})
+	-- 	end
+	-- },
 	-- language support
 	-- Commentary
 	{
@@ -383,25 +428,28 @@ require("lazy").setup({
 	},
 	{
         'nvim-treesitter/nvim-treesitter',
-		dependencies = { 
+		dependencies = {
             'nvim-treesitter/nvim-treesitter-refactor',
             'windwp/nvim-ts-autotag',
         },
 		config = function()
-            vim.cmd('highlight TSParenthesis guifg=#ffffff') 
 			require'nvim-treesitter.configs'.setup {
-				ensure_installed = { "c", "lua", "vim", "cpp", "python", "rust", "markdown", "toml" },
+				ensure_installed = { "c", "lua", "vim", "cpp", "python", "rust", "markdown", "toml", "go" },
 				sync_install = false,
 				auto_install = true,
 				highlight = {
-					enable = true,
-					disable = function(lang, buf)
-						local max_filesize = 100 * 1024 -- 100 KB
-						local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-						if ok and stats and stats.size > max_filesize then
-							return true
-						end
-					end,
+					enable = false,
+					disable = {
+                        function(lang, buf)
+                            local max_filesize = 100 * 1024 -- 100 KB
+                            local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+                            if ok and stats and stats.size > max_filesize then
+                                return true
+                            end
+                        end,
+                        "rust",
+                        "lua",
+                    },
 
 					additional_vim_regex_highlighting = false,
 				},
@@ -462,5 +510,35 @@ require("lazy").setup({
                 -- Configuration here, or leave empty to use defaults
             })
         end
+    },
+    {
+        "xiyaowong/transparent.nvim",
+        config = true,
+    },
+    {
+        "stevearc/dressing.nvim",
+        config = true,
+    },
+    {
+        "nvim-neorg/neorg",
+        build = ":Neorg sync-parsers",
+        lazy = false, -- specify lazy = false because some lazy.nvim distributions set lazy = true by default
+        -- tag = "*",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        config = function()
+            require("neorg").setup {
+                load = {
+                    ["core.defaults"] = {}, -- Loads default behaviour
+                    ["core.concealer"] = {}, -- Adds pretty icons to your documents
+                    ["core.dirman"] = { -- Manages Neorg workspaces
+                        config = {
+                            workspaces = {
+                                notes = "~/notes",
+                            },
+                        },
+                    },
+                },
+            }
+        end,
     },
 })
