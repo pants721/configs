@@ -564,5 +564,7 @@ require("lazy").setup({
             mapping = {"jk"},
         }
     },
-    {"stevearc/dressing.nvim", opts = {}},
+    { "stevearc/dressing.nvim", opts = {} },
+    { 'brenoprata10/nvim-highlight-colors', config = true },
 })
+
