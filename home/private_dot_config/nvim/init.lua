@@ -21,7 +21,7 @@ vim.opt.smartcase = true
 
 vim.cmd "set rnu nu"
 
-vim.opt.colorcolumn = '80'
+vim.opt.colorcolumn = '100'
 vim.opt.signcolumn = 'yes'
 vim.opt.guicursor = 'i:block'
 
@@ -91,16 +91,21 @@ vim.opt.rtp:prepend(lazypath)
 
 -- actual plugins
 require("lazy").setup({
+    'rktjmp/lush.nvim',
     {
-        "miikanissi/modus-themes.nvim",
-        priority = 1000,
-        opts = {
-        },
+        url = "https://github.com/pants721/pants-modus.nvim",
         config = function()
             vim.cmd([[colorscheme modus_vivendi]])
-            vim.o.background = 'dark'
         end
     },
+    -- {
+    --     "miikanissi/modus-themes.nvim",
+    --     priority = 1000,
+    --     config = function()
+    --         vim.cmd([[colorscheme modus_vivendi]])
+    --         vim.o.background = 'dark'
+    --     end
+    -- },
     {
         'nvim-lualine/lualine.nvim',
         priority = 1000,
@@ -118,7 +123,6 @@ require("lazy").setup({
                 },
                 options = {
                     icons_enabled = false,
-                    -- theme = 'powerline',
                     -- component_separators = { left = '', right = ''},
                     -- section_separators = { left = '', right = ''},
                     component_separators = { left = '', right = '' },
@@ -155,9 +159,19 @@ require("lazy").setup({
         },
         config = function()
             -- Setup language servers.
+
+            local lspconfig = require('lspconfig')
+            lspconfig.ccls.setup {
+                init_options = {
+                    cache = {
+                        directory = ".ccls-cache"
+                    },
+                },
+            }
             require("mason").setup()
             require("mason-lspconfig").setup()
             require("mason-lspconfig").setup_handlers {
+                ['rust_analyzer'] = function() end,
                 function(server_name) -- default handler (optional)
                     require("lspconfig")[server_name].setup {
                         capabilities = require('cmp_nvim_lsp').default_capabilities()
@@ -204,7 +218,7 @@ require("lazy").setup({
 
                     -- None of this semantics tokens business.
                     -- https://www.reddit.com/r/neovim/comments/143efmd/is_it_possible_to_disable_treesitter_completely/
-                    -- client.server_capabilities.semanticTokensProvider = nil
+                    client.server_capabilities.semanticTokensProvider = nil
                 end,
             })
         end
@@ -328,13 +342,12 @@ require("lazy").setup({
     },
     {
         'nvim-telescope/telescope.nvim',
-        tag = '0.1.6',
         dependencies = { 'nvim-lua/plenary.nvim' },
         config = function()
             require("telescope").setup {
                 defaults = {
                     layout_config = {
-                        height = 10,
+                        height = 15,
                     },
                     mappings = {
                         i = {
@@ -363,14 +376,22 @@ require("lazy").setup({
                             },
                         },
                     },
-                }
+                },
+                extensions = {
+                    file_browser = {
+                        path = "%:p:h",
+                        cwd_to_path = true,
+                        select_buffer = true,
+                        hijack_netrw = true,
+                    },
+                },
             }
             require("telescope").load_extension "file_browser"
             local builtin = require("telescope.builtin")
             local themes = require('telescope.themes')
             local opts = {
                 layout_config = {
-                    height = 10,
+                    height = 15,
                 }
             }
             -- vim.keymap.set("n", "<leader>fj", ":Telescope file_browser path=%:p:h select_buffer=true<CR>", {silent=true})
@@ -427,8 +448,9 @@ require("lazy").setup({
                                 return true
                             end
                         end,
-                        "rust",
+                        -- "rust",
                         "lua",
+                        "vimdoc",
                     },
 
                     additional_vim_regex_highlighting = {"markdown"},
@@ -499,6 +521,48 @@ require("lazy").setup({
         opts = {},
     },
     {
-        'ThePrimeagen/vim-be-good',
+        "xiyaowong/transparent.nvim",
+        lazy = false,
+        config = true,
     },
+    {
+        "ray-x/go.nvim",
+        dependencies = {  -- optional packages
+            "ray-x/guihua.lua",
+            "neovim/nvim-lspconfig",
+            "nvim-treesitter/nvim-treesitter",
+        },
+        config = function()
+            require("go").setup()
+        end,
+        event = {"CmdlineEnter"},
+        ft = {"go", 'gomod'},
+        build = ':lua require("go.install").update_all_sync()' -- if you need to install/update all binaries
+    },
+    {
+        'mrcjkb/rustaceanvim',
+        version = '^4', -- Recommended
+        ft = { 'rust' },
+    },
+    {
+        "zbirenbaum/copilot.lua",
+        opts = {
+            suggestion  = {
+                -- auto_trigger = true,
+                keymap = {
+                    accept_word = "<M-k>",
+                    dismiss = "<M-j>",
+                }
+            },
+        },
+        cmd = "Copilot",
+        event = "InsertEnter",
+    },
+    {
+        "max397574/better-escape.nvim",
+        opts = {
+            mapping = {"jk"},
+        }
+    },
+    {"stevearc/dressing.nvim", opts = {}},
 })
