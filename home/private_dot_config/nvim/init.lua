@@ -3,7 +3,6 @@
 -- set leader
 vim.keymap.set("n", "<Space>", "<Nop>", { silent = true })
 vim.g.mapleader = " "
-
 vim.opt.undofile = true
 
 local tabwidth = 4
@@ -16,8 +15,8 @@ vim.opt.expandtab = true
 -- vim.opt.spell = true
 
 vim.opt.ignorecase = true
-
 vim.opt.smartcase = true
+vim.opt.infercase = true
 
 vim.cmd "set rnu nu"
 
@@ -38,6 +37,12 @@ vim.opt.clipboard = "unnamedplus"
 
 vim.opt.background = "dark"
 
+vim.opt.splitbelow = true -- Put new windows below current
+vim.opt.splitright = true -- Put new windows right of current
+
+vim.opt.modelines = 0
+vim.opt.hidden = true
+
 -------------------------------------------------------------------------------
 --
 -- Hotkeys
@@ -45,7 +50,6 @@ vim.opt.background = "dark"
 -------------------------------------------------------------------------------
 
 -- search buffers
-vim.keymap.set('n', '<leader>;', '<cmd>Buffers<cr>')
 -- quick-save
 vim.keymap.set('n', '<leader>w', '<cmd>w<cr>')
 -- make missing : less annoying
@@ -91,47 +95,46 @@ vim.opt.rtp:prepend(lazypath)
 
 -- actual plugins
 require("lazy").setup({
-    'rktjmp/lush.nvim',
     {
-        url = "https://github.com/pants721/pants-modus.nvim",
-        config = function()
-            vim.cmd([[colorscheme modus_vivendi]])
+        "folke/tokyonight.nvim",
+        lazy = false,
+        priority = 1000,
+        opts = {},
+        config = function ()
+            require("tokyonight").setup {
+                style = "night",
+                styles = {
+                    functions = {}
+                },
+                on_colors = function(colors)
+                    colors.bg = "#0E1018"
+                end
+            }
+            vim.cmd[[colorscheme tokyonight]]
         end
     },
     -- {
-    --     "miikanissi/modus-themes.nvim",
-    --     priority = 1000,
+    --     url = "https://github.com/pants721/pants-modus.nvim",
     --     config = function()
     --         vim.cmd([[colorscheme modus_vivendi]])
-    --         vim.o.background = 'dark'
     --     end
     -- },
     {
-        'nvim-lualine/lualine.nvim',
-        priority = 1000,
-        dependencies = {
-            'nvim-tree/nvim-web-devicons',
-            'arkav/lualine-lsp-progress',
+        "j-hui/fidget.nvim",
+        opts = {
+            -- options
         },
+    },
+    {
+        "rebelot/heirline.nvim",
+        -- You can optionally lazy-load heirline on UiEnter
+        -- to make sure all required plugins and colorschemes are loaded before setup
+        -- event = "UiEnter",
         config = function()
-            require('lualine').setup {
-                sections = {
-                    lualine_c = {
-                        'filename',
-                        'lsp_progress',
-                    }
-                },
-                options = {
-                    icons_enabled = false,
-                    -- component_separators = { left = '', right = ''},
-                    -- section_separators = { left = '', right = ''},
-                    component_separators = { left = '', right = '' },
-                    section_separators = { left = '', right = '' },
-                    always_divide_middle = true,
-                    globalstatus = true,
-                },
-            }
-        end,
+            require("heirline").setup({
+                
+            })
+        end
     },
     -- git
     {
@@ -200,7 +203,6 @@ require("lazy").setup({
                     vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
                     vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
                     vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-                    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
                     vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts)
                     vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
                     vim.keymap.set('n', '<leader>wl', function()
@@ -342,7 +344,10 @@ require("lazy").setup({
     },
     {
         'nvim-telescope/telescope.nvim',
-        dependencies = { 'nvim-lua/plenary.nvim' },
+        dependencies = {
+            'nvim-lua/plenary.nvim',
+            "debugloop/telescope-undo.nvim",
+        },
         config = function()
             require("telescope").setup {
                 defaults = {
@@ -389,6 +394,7 @@ require("lazy").setup({
             require("telescope").load_extension "file_browser"
             local builtin = require("telescope.builtin")
             local themes = require('telescope.themes')
+            require("telescope").load_extension("undo")
             local opts = {
                 layout_config = {
                     height = 15,
@@ -429,7 +435,6 @@ require("lazy").setup({
     {
         'nvim-treesitter/nvim-treesitter',
         dependencies = {
-            'nvim-treesitter/nvim-treesitter-refactor',
             'nvim-treesitter/nvim-treesitter-context',
             'windwp/nvim-ts-autotag',
         },
@@ -457,14 +462,6 @@ require("lazy").setup({
                 },
                 indent = {
                     enable = true
-                },
-                refactor = {
-                    smart_rename = {
-                        enable = true,
-                        keymaps = {
-                            smart_rename = "grr",
-                        },
-                    },
                 },
                 autotag = {
                     enable = true,
@@ -526,20 +523,6 @@ require("lazy").setup({
         config = true,
     },
     {
-        "ray-x/go.nvim",
-        dependencies = {  -- optional packages
-            "ray-x/guihua.lua",
-            "neovim/nvim-lspconfig",
-            "nvim-treesitter/nvim-treesitter",
-        },
-        config = function()
-            require("go").setup()
-        end,
-        event = {"CmdlineEnter"},
-        ft = {"go", 'gomod'},
-        build = ':lua require("go.install").update_all_sync()' -- if you need to install/update all binaries
-    },
-    {
         'mrcjkb/rustaceanvim',
         version = '^4', -- Recommended
         ft = { 'rust' },
@@ -564,7 +547,41 @@ require("lazy").setup({
             mapping = {"jk"},
         }
     },
-    { "stevearc/dressing.nvim", opts = {} },
     { 'brenoprata10/nvim-highlight-colors', config = true },
+    {
+        'stevearc/dressing.nvim',
+        opts = {
+            input = {
+                override = function(conf)
+                    conf.col = -1
+                    conf.row = 0
+                    return conf
+                end,
+            },
+        },
+    },
+    {
+        "smjonas/inc-rename.nvim",
+        config = function()
+            require("inc_rename").setup {
+                input_buffer_type = "dressing",
+            }
+        end,
+    },
+    {
+        "kylechui/nvim-surround",
+        version = "*", -- Use for stability; omit to use `main` branch for the latest features
+        event = "VeryLazy",
+        config = true,
+    },
+    { "folke/neodev.nvim", opts = {} },
 })
 
+-------------------------------------------------------------------------------
+--
+-- After
+--
+-------------------------------------------------------------------------------
+
+require("pantsline")
+vim.api.nvim_set_hl(0, "StatusLine", { ctermbg=0, bg="#0E1018" })
