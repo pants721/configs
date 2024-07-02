@@ -1,9 +1,11 @@
 -- super based off of jon gjengset's vim config https://github.com/jonhoo/configs
+-- vim.cmd "colorscheme retrobox"
 
 -- set leader
 vim.keymap.set("n", "<Space>", "<Nop>", { silent = true })
 vim.g.mapleader = " "
 vim.opt.undofile = true
+
 
 local tabwidth = 4
 vim.opt.shiftwidth = tabwidth
@@ -20,7 +22,7 @@ vim.opt.infercase = true
 
 vim.cmd "set rnu nu"
 
-vim.opt.colorcolumn = '100'
+-- vim.opt.colorcolumn = '100'
 vim.opt.signcolumn = 'yes'
 vim.opt.guicursor = 'i:block'
 
@@ -52,13 +54,14 @@ vim.opt.hidden = true
 -- search buffers
 -- quick-save
 vim.keymap.set('n', '<leader>w', '<cmd>w<cr>')
--- make missing : less annoying
-vim.keymap.set('n', ';', ':')
 -- jk as Esc
 vim.keymap.set('i', 'jk', '<Esc>')
 vim.keymap.set('i', 'Jk', '<Esc>')
 vim.keymap.set('i', 'jK', '<Esc>')
 vim.keymap.set('i', 'JK', '<Esc>')
+
+vim.keymap.set('n', 'j', 'gj')
+vim.keymap.set('n', 'k', 'gk')
 -- Jump to start and end of line using the home row keys
 vim.keymap.set('', 'H', '^')
 vim.keymap.set('', 'L', '$')
@@ -96,45 +99,30 @@ vim.opt.rtp:prepend(lazypath)
 -- actual plugins
 require("lazy").setup({
     {
-        "folke/tokyonight.nvim",
-        lazy = false,
-        priority = 1000,
-        opts = {},
-        config = function ()
-            require("tokyonight").setup {
-                style = "night",
-                styles = {
-                    functions = {}
-                },
-                on_colors = function(colors)
-                    colors.bg = "#0E1018"
-                end
-            }
-            vim.cmd[[colorscheme tokyonight]]
-        end
-    },
-    -- {
-    --     url = "https://github.com/pants721/pants-modus.nvim",
-    --     config = function()
-    --         vim.cmd([[colorscheme modus_vivendi]])
-    --     end
-    -- },
-    {
-        "j-hui/fidget.nvim",
-        opts = {
-            -- options
-        },
-    },
-    {
-        "rebelot/heirline.nvim",
-        -- You can optionally lazy-load heirline on UiEnter
-        -- to make sure all required plugins and colorschemes are loaded before setup
-        -- event = "UiEnter",
+        "zaldih/themery.nvim",
         config = function()
-            require("heirline").setup({
-                
+            require("themery").setup({
+                themes = {"gruber-darker", "pantsbox", "modus_vivendi"}, -- Your list of installed colorschemes
+                themeConfigFile = "~/.config/nvim/lua/theme.lua", -- Described below
+                livePreview = true, -- Apply theme while browsing. Default to true.
             })
-        end
+            vim.keymap.set("n", "<leader>tt", ":Themery<CR>", {silent=true})
+            require("theme")
+        end,
+    },
+    {
+        "blazkowolf/gruber-darker.nvim",
+    },
+    {
+        "pants721/pantsbox",
+        config = function()
+            require("pantsbox").setup {
+                contrast = "hard",
+            }
+        end,
+    },
+    {
+        "pants721/pants-modus.nvim",
     },
     -- git
     {
@@ -148,8 +136,12 @@ require("lazy").setup({
             require('neogit').setup {
                 kind = "replace",
             }
-            vim.keymap.set('n', '<leader>gg', ":Neogit<cr>", {silent = true})
-            vim.keymap.set('n', '<leader>gc', ":Neogit commit<cr>", {silent = true})
+
+            require('diffview').setup {
+                use_icons = false,
+            }
+            vim.keymap.set('n', '<leader>gg', ":Neogit<cr>", { silent = true })
+            vim.keymap.set('n', '<leader>gc', ":Neogit commit<cr>", { silent = true })
         end
     },
     -- LSP
@@ -175,6 +167,20 @@ require("lazy").setup({
             require("mason-lspconfig").setup()
             require("mason-lspconfig").setup_handlers {
                 ['rust_analyzer'] = function() end,
+                ['lua_ls'] = function ()
+                  require("lspconfig")['lua_ls'].setup {
+                        settings = {
+                            Lua = {
+                                workspace = {
+                                    library = {
+                                        "~/LuaAddons"
+                                    }
+                                }
+                            }
+                        },
+                        capabilities = require('cmp_nvim_lsp').default_capabilities()
+                    }
+                end,
                 function(server_name) -- default handler (optional)
                     require("lspconfig")[server_name].setup {
                         capabilities = require('cmp_nvim_lsp').default_capabilities()
@@ -208,8 +214,8 @@ require("lazy").setup({
                     vim.keymap.set('n', '<leader>wl', function()
                         print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
                     end, opts)
-                    --vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
-                    vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename, opts)
+                    vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
+                    vim.keymap.set('n', '<leader>rr', vim.lsp.buf.rename, opts)
                     vim.keymap.set({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, opts)
                     vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
                     vim.keymap.set('n', '<leader>f', function()
@@ -285,8 +291,8 @@ require("lazy").setup({
                 },
                 mapping = cmp.mapping.preset.insert({
                     ["<Tab>"] = cmp.mapping(function(fallback)
-                    if cmp.visible() then
-                        cmp.select_next_item()
+                        if cmp.visible() then
+                            cmp.select_next_item()
                             -- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable()
                             -- they way you will only jump inside the snippet region
                         elseif luasnip.expand_or_jumpable() then
@@ -296,17 +302,17 @@ require("lazy").setup({
                         else
                             fallback()
                         end
-                        end, { "i", "s" }),
+                    end, { "i", "s" }),
 
                     ["<S-Tab>"] = cmp.mapping(function(fallback)
-                    if cmp.visible() then
-                        cmp.select_prev_item()
+                        if cmp.visible() then
+                            cmp.select_prev_item()
                         elseif luasnip.jumpable(-1) then
                             luasnip.jump(-1)
                         else
                             fallback()
                         end
-                        end, { "i", "s" }),
+                    end, { "i", "s" }),
                     ['<C-b>'] = cmp.mapping.scroll_docs(-4),
                     ['<C-f>'] = cmp.mapping.scroll_docs(4),
                     ['<C-Space>'] = cmp.mapping.complete(),
@@ -317,8 +323,8 @@ require("lazy").setup({
                 }),
                 sources = cmp.config.sources({
                     { name = 'nvim_lsp' },
-                    }, {
-                        { name = 'path' },
+                }, {
+                    { name = 'path' },
                 }),
                 experimental = {
                     ghost_text = true,
@@ -340,7 +346,8 @@ require("lazy").setup({
     },
     {
         'nvim-telescope/telescope-fzf-native.nvim',
-        build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build'
+        build =
+        'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build'
     },
     {
         'nvim-telescope/telescope.nvim',
@@ -401,7 +408,8 @@ require("lazy").setup({
                 }
             }
             -- vim.keymap.set("n", "<leader>fj", ":Telescope file_browser path=%:p:h select_buffer=true<CR>", {silent=true})
-            vim.keymap.set("n", "<leader>fj", function() require "telescope".extensions.file_browser.file_browser(themes.get_ivy(opts)) end, {})
+            vim.keymap.set("n", "<leader>fj",
+                function() require "telescope".extensions.file_browser.file_browser(themes.get_ivy(opts)) end, {})
             vim.keymap.set("n", "<leader>ff", function() builtin.find_files(themes.get_ivy(opts)) end, {})
             vim.keymap.set("n", "<leader>fs", function() builtin.live_grep(themes.get_ivy(opts)) end, {})
             vim.keymap.set("n", "<leader>fb", function() builtin.buffers(themes.get_ivy(opts)) end, {})
@@ -435,11 +443,11 @@ require("lazy").setup({
     {
         'nvim-treesitter/nvim-treesitter',
         dependencies = {
-            'nvim-treesitter/nvim-treesitter-context',
             'windwp/nvim-ts-autotag',
+            "nvim-treesitter/nvim-treesitter-textobjects",
         },
         config = function()
-            require'nvim-treesitter.configs'.setup {
+            require 'nvim-treesitter.configs'.setup {
                 ensure_installed = { "c", "lua", "vim", "cpp", "python", "rust", "markdown", "toml", "go" },
                 sync_install = false,
                 auto_install = true,
@@ -458,7 +466,7 @@ require("lazy").setup({
                         "vimdoc",
                     },
 
-                    additional_vim_regex_highlighting = {"markdown"},
+                    additional_vim_regex_highlighting = { "markdown" },
                 },
                 indent = {
                     enable = true
@@ -466,9 +474,24 @@ require("lazy").setup({
                 autotag = {
                     enable = true,
                 },
-            }
-            require 'treesitter-context'.setup {
-                multiline_threshold = 5,
+                textobjects = {
+                    select = {
+                        enable = true,
+                        lookahead = true,
+                        keymaps = {
+                            ["af"] = "@function.outer",
+                            ["if"] = "@function.inner",
+                            ["ac"] = "@class.outer",
+                            ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+                            ["as"] = { query = "@scope", query_group = "locals", desc = "Select language scope" },
+                        },
+                        selection_modes = {
+                            ['@parameter.outer'] = 'v', -- charwise
+                            ['@function.outer'] = 'V',  -- linewise
+                            ['@class.outer'] = '<c-v>', -- blockwise
+                        },
+                    },
+                },
             }
         end
     },
@@ -504,16 +527,6 @@ require("lazy").setup({
         config = true,
     },
     {
-        "kylechui/nvim-surround",
-        version = "*", -- Use for stability; omit to use `main` branch for the latest features
-        event = "VeryLazy",
-        config = function()
-            require("nvim-surround").setup({
-                -- Configuration here, or leave empty to use defaults
-            })
-        end
-    },
-    {
         'vidocqh/auto-indent.nvim',
         opts = {},
     },
@@ -523,14 +536,9 @@ require("lazy").setup({
         config = true,
     },
     {
-        'mrcjkb/rustaceanvim',
-        version = '^4', -- Recommended
-        ft = { 'rust' },
-    },
-    {
         "zbirenbaum/copilot.lua",
         opts = {
-            suggestion  = {
+            suggestion = {
                 -- auto_trigger = true,
                 keymap = {
                     accept_word = "<M-k>",
@@ -544,22 +552,10 @@ require("lazy").setup({
     {
         "max397574/better-escape.nvim",
         opts = {
-            mapping = {"jk"},
+            mapping = { "jk" },
         }
     },
     { 'brenoprata10/nvim-highlight-colors', config = true },
-    {
-        'stevearc/dressing.nvim',
-        opts = {
-            input = {
-                override = function(conf)
-                    conf.col = -1
-                    conf.row = 0
-                    return conf
-                end,
-            },
-        },
-    },
     {
         "smjonas/inc-rename.nvim",
         config = function()
@@ -574,14 +570,87 @@ require("lazy").setup({
         event = "VeryLazy",
         config = true,
     },
-    { "folke/neodev.nvim", opts = {} },
+    "lambdalisue/suda.vim",
+    {
+        'nvim-lualine/lualine.nvim',
+        opts = {
+            options = {
+                icons_enabled = false,
+                component_separators = { left = '', right = ''},
+                section_separators = { left = '', right = ''},
+                globalstatus = true,
+            }
+        }
+    },
+    {
+        'stevearc/oil.nvim',
+        opts = {},
+        -- Optional dependencies
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+    },
+    {
+        'mrcjkb/rustaceanvim',
+        version = '^4', -- Recommended
+        lazy = false, -- This plugin is already lazy
+        config = function()
+            vim.g.rustaceanvim = {
+                server = {
+                    on_attach = function(client, bufnr)
+                        vim.keymap.set(
+                            "n",
+                            "<leader>ca", 
+                            function()
+                                vim.cmd.RustLsp('codeAction') -- supports rust-analyzer's grouping
+                                -- or vim.lsp.buf.codeAction() if you don't want grouping.
+                            end,
+                            { silent = true, buffer = bufnr }
+                        )
+
+                        -- open cargo.toml
+                        vim.keymap.set(
+                            "n",
+                            "<leader>rc",
+                            function()
+                                vim.cmd.RustLsp('openCargo')
+                            end,
+                            { silent = true, buffer = bufnr }
+                        )
+
+                        -- open docs.rs
+                        vim.keymap.set(
+                            "n",
+                            "<leader>rd",
+                            function()
+                                vim.cmd.RustLsp('openDocs')
+                            end,
+                            { silent = true, buffer = bufnr }
+                        )
+
+                        -- render error
+                        vim.keymap.set(
+                            "n",
+                            "<leader>re",
+                            function()
+                                vim.cmd.RustLsp('renderDiagnostic')
+                            end,
+                            { silent = true, buffer = bufnr }
+                        )
+                        
+                        vim.keymap.set(
+                            "n",
+                            "J",
+                            function()
+                                vim.cmd.RustLsp('joinLines')
+                            end,
+                            { silent = true, buffer = bufnr }
+                        )
+                    end,
+                }
+            }
+        end
+    },
+    {
+        "lukas-reineke/headlines.nvim",
+        config = true
+    },
 })
-
--------------------------------------------------------------------------------
---
--- After
---
--------------------------------------------------------------------------------
-
-require("pantsline")
-vim.api.nvim_set_hl(0, "StatusLine", { ctermbg=0, bg="#0E1018" })

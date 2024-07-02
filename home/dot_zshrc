@@ -45,7 +45,7 @@ fi
 
 alias n="nvim"
 alias vim="nvim"
-alias lamevim="bash vim"
+alias lamevim="\vim"
 alias r="ranger"
 
 alias c="cargo"
@@ -55,6 +55,8 @@ export PATH="$HOME/.cargo/bin:$PATH"
 
 export PATH="/usr/local/go/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+
+export PATH="$HOME/go/bin:$PATH"
 
 autoload -Uz vcs_info
 
@@ -71,6 +73,14 @@ RPROMPT='%{%B%F{green}%}$vcs_info_msg_0_%{%b%F{reset}%}'
 
 PS1='${debian_chroot:+($debian_chroot)}%B%F{green}%n@%m%f:%F{blue}%~%f%b$ '
 
+# setopt PROMPT_SUBST
+#
+# RPROMPT='%{%B%}$vcs_info_msg_0_%{%b%}'
+#
+# PS1='${debian_chroot:+($debian_chroot)}%B%n@%m%f:%~%f%b$ '
+
 alias cz="chezmoi"
 eval "$(zoxide init zsh)"
 alias lg="lazygit"
+alias bm="bashmount"
+alias hx="helix"

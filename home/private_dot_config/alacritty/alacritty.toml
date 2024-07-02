@@ -1,12 +1,15 @@
-# import = ["~/.config/alacritty/gruvbox-dark.toml"]
-import = ["~/.config/alacritty/gruvpants.toml"]
+import = ["~/.config/alacritty/ayu_dark.toml"]
+
+# import = ["~/.config/alacritty/gruvpants.toml"]
 live_config_reload = true
 
 [env]
-TERM = "alacritty"
+# TERM = "alacritty"
+# TERM = "tmux-256color"
+TERM = "xterm-256color"
 
 [window]
-# opacity = 0.9
+# opacity = 0.90
 dynamic_title = true
 
 [scrolling]
@@ -14,12 +17,14 @@ history = 12000
 multiplier = 1
 
 [font]
-size = 8
+size = 10
 
 [font.normal]
-# family = "firacode"
-family = "roboto mono nerd font"
-style = "medium"
+# family = "jetbrainsmono nerd font"
+family = "firacode nerd font"
+# family = "monaco nerd font mono"
+# family = "inconsolatalgc nerd font"
+# style = "medium"
 
 [shell]
 args = ["-l", "-c", "tmux attach || tmux"]
