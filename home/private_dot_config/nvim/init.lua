@@ -22,7 +22,7 @@ vim.opt.infercase = true
 
 vim.cmd "set rnu nu"
 
--- vim.opt.colorcolumn = '100'
+vim.opt.colorcolumn = '80'
 vim.opt.signcolumn = 'yes'
 vim.opt.guicursor = 'i:block'
 
@@ -102,13 +102,35 @@ require("lazy").setup({
         "zaldih/themery.nvim",
         config = function()
             require("themery").setup({
-                themes = {"gruber-darker", "pantsbox", "modus_vivendi"}, -- Your list of installed colorschemes
-                themeConfigFile = "~/.config/nvim/lua/theme.lua", -- Described below
+                themes = {"gruber-darker", "pantsbox", "modus_vivendi", "retrobox", "melange", "catppuccin", "tokyonight-night", "edge", "quiet"}, -- Your list of installed colorschemes
                 livePreview = true, -- Apply theme while browsing. Default to true.
             })
             vim.keymap.set("n", "<leader>tt", ":Themery<CR>", {silent=true})
             require("theme")
         end,
+    },
+    {
+        "sainnhe/edge",
+        lazy = false,
+        priority = 1000,
+        opts = {},
+    },
+    {
+        "folke/tokyonight.nvim",
+        lazy = false,
+        priority = 1000,
+        opts = {},
+    },
+    {
+        "savq/melange-nvim",
+    },
+    {
+        "catppuccin/nvim",
+        name = "catppuccin",
+        opts = {
+            flavour = "mocha",
+        },
+        priority = 1000
     },
     {
         "blazkowolf/gruber-darker.nvim",
@@ -282,6 +304,9 @@ require("lazy").setup({
                         require("luasnip.loaders.from_vscode").lazy_load()
                     end,
                 },
+                -- completion = {
+                --     autocomplete = false
+                -- },
                 window = {
                     completion = {
                         border = nil,
@@ -527,10 +552,6 @@ require("lazy").setup({
         config = true,
     },
     {
-        'vidocqh/auto-indent.nvim',
-        opts = {},
-    },
-    {
         "xiyaowong/transparent.nvim",
         lazy = false,
         config = true,
@@ -551,9 +572,9 @@ require("lazy").setup({
     },
     {
         "max397574/better-escape.nvim",
-        opts = {
-            mapping = { "jk" },
-        }
+        config = function()
+            require("better_escape").setup()
+        end,
     },
     { 'brenoprata10/nvim-highlight-colors', config = true },
     {
@@ -579,6 +600,7 @@ require("lazy").setup({
                 component_separators = { left = '', right = ''},
                 section_separators = { left = '', right = ''},
                 globalstatus = true,
+                -- theme = "powerline",
             }
         }
     },
@@ -635,7 +657,6 @@ require("lazy").setup({
                             end,
                             { silent = true, buffer = bufnr }
                         )
-                        
                         vim.keymap.set(
                             "n",
                             "J",
@@ -650,7 +671,35 @@ require("lazy").setup({
         end
     },
     {
-        "lukas-reineke/headlines.nvim",
-        config = true
+        'mfussenegger/nvim-dap',
+        config = function ()
+            vim.keymap.set("n", "<leader>a", require("harpoon.mark").add_file)
+            vim.keymap.set("n", "<leader>qb", require'dap'.toggle_breakpoint)
+
+            vim.keymap.set(
+                "n",
+                "<leader>qc",
+                require'dap'.continue,
+                { silent = true }
+            )
+
+            vim.keymap.set(
+                "n",
+                "<leader>qe",
+                require'dap'.repl.open,
+                { silent = true }
+            )
+        end,
     },
+    {
+        'MeanderingProgrammer/render-markdown.nvim',
+        opts = {},
+        dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+
+    },
+    -- {
+    --     'm4xshen/hardtime.nvim',
+    --     dependencies = { "MunifTanjim/nui.nvim", "nvim-lua/plenary.nvim" },
+    --     opts = {},
+    -- },
 })

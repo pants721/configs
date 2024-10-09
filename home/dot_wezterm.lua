@@ -6,9 +6,9 @@ config.default_prog = { '/bin/zsh', '-l', '-c', 'tmux attach || tmux' }
 
 config.font = wezterm.font {
     -- family = 'jetbrainsmono nerd font',
-    family = 'firacode nerd font',
+    -- family = 'firacode nerd font',
     -- family = 'Iosevka Nerd Font',
-    -- family = 'hack nerd font',
+    family = 'hack nerd font',
     harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' },
 }
 -- config.freetype_load_flags = 'NO_HINTING'
@@ -31,6 +31,6 @@ config.window_padding = {
     top = 0,
     bottom = 0,
 }
--- config.window_background_opacity = 0.75
+config.window_background_opacity = 0.9
 
 return config

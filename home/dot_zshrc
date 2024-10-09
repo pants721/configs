@@ -84,3 +84,13 @@ eval "$(zoxide init zsh)"
 alias lg="lazygit"
 alias bm="bashmount"
 alias hx="helix"
+
+eval "$(register-python-argcomplete pipx)"
+
+# Created by `pipx` on 2024-07-25 23:41:18
+export PATH="$PATH:/home/pants/.local/bin"
+export LD_LIBRARY_PATH=/home/pants/.local/lib/arch-mojo:$LD_LIBRARY_PATH
+export MODULAR_HOME="/home/pants/.modular"
+export PATH="/home/pants/.modular/pkg/packages.modular.com_mojo/bin:$PATH"
+
+. "$HOME/.cargo/env"
