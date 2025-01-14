@@ -60,8 +60,8 @@ vim.keymap.set('i', 'Jk', '<Esc>')
 vim.keymap.set('i', 'jK', '<Esc>')
 vim.keymap.set('i', 'JK', '<Esc>')
 
-vim.keymap.set('n', 'j', 'gj')
-vim.keymap.set('n', 'k', 'gk')
+-- vim.keymap.set('n', 'j', 'gj')
+-- vim.keymap.set('n', 'k', 'gk')
 -- Jump to start and end of line using the home row keys
 vim.keymap.set('', 'H', '^')
 vim.keymap.set('', 'L', '$')
@@ -178,13 +178,13 @@ require("lazy").setup({
             -- Setup language servers.
 
             local lspconfig = require('lspconfig')
-            lspconfig.ccls.setup {
-                init_options = {
-                    cache = {
-                        directory = ".ccls-cache"
-                    },
-                },
-            }
+            -- lspconfig.ccls.setup {
+            --     init_options = {
+            --         cache = {
+            --             directory = ".ccls-cache"
+            --         },
+            --     },
+            -- }
             require("mason").setup()
             require("mason-lspconfig").setup()
             require("mason-lspconfig").setup_handlers {
@@ -317,10 +317,10 @@ require("lazy").setup({
                 mapping = cmp.mapping.preset.insert({
                     ["<Tab>"] = cmp.mapping(function(fallback)
                         if cmp.visible() then
-                            cmp.select_next_item()
+                            cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
                             -- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable()
                             -- they way you will only jump inside the snippet region
-                        elseif luasnip.expand_or_jumpable() then
+                        elseif luasnip.expand_or_locally_jumpable() then
                             luasnip.expand_or_jump()
                         elseif has_words_before() then
                             cmp.complete()
@@ -331,7 +331,7 @@ require("lazy").setup({
 
                     ["<S-Tab>"] = cmp.mapping(function(fallback)
                         if cmp.visible() then
-                            cmp.select_prev_item()
+                            cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
                         elseif luasnip.jumpable(-1) then
                             luasnip.jump(-1)
                         else
@@ -352,7 +352,7 @@ require("lazy").setup({
                     { name = 'path' },
                 }),
                 experimental = {
-                    ghost_text = true,
+                    ghost_text = false,
                 },
             })
 
@@ -556,20 +556,20 @@ require("lazy").setup({
         lazy = false,
         config = true,
     },
-    {
-        "zbirenbaum/copilot.lua",
-        opts = {
-            suggestion = {
-                -- auto_trigger = true,
-                keymap = {
-                    accept_word = "<M-k>",
-                    dismiss = "<M-j>",
-                }
-            },
-        },
-        cmd = "Copilot",
-        event = "InsertEnter",
-    },
+    -- {
+    --     "zbirenbaum/copilot.lua",
+    --     opts = {
+    --         suggestion = {
+    --             -- auto_trigger = true,
+    --             keymap = {
+    --                 accept_word = "<M-k>",
+    --                 dismiss = "<M-j>",
+    --             }
+    --         },
+    --     },
+    --     cmd = "Copilot",
+    --     event = "InsertEnter",
+    -- },
     {
         "max397574/better-escape.nvim",
         config = function()
@@ -603,12 +603,6 @@ require("lazy").setup({
                 -- theme = "powerline",
             }
         }
-    },
-    {
-        'stevearc/oil.nvim',
-        opts = {},
-        -- Optional dependencies
-        dependencies = { "nvim-tree/nvim-web-devicons" },
     },
     {
         'mrcjkb/rustaceanvim',
@@ -671,27 +665,6 @@ require("lazy").setup({
         end
     },
     {
-        'mfussenegger/nvim-dap',
-        config = function ()
-            vim.keymap.set("n", "<leader>a", require("harpoon.mark").add_file)
-            vim.keymap.set("n", "<leader>qb", require'dap'.toggle_breakpoint)
-
-            vim.keymap.set(
-                "n",
-                "<leader>qc",
-                require'dap'.continue,
-                { silent = true }
-            )
-
-            vim.keymap.set(
-                "n",
-                "<leader>qe",
-                require'dap'.repl.open,
-                { silent = true }
-            )
-        end,
-    },
-    {
         'MeanderingProgrammer/render-markdown.nvim',
         opts = {},
         dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
@@ -702,4 +675,26 @@ require("lazy").setup({
     --     dependencies = { "MunifTanjim/nui.nvim", "nvim-lua/plenary.nvim" },
     --     opts = {},
     -- },
+    {
+        "benlubas/molten-nvim",
+        version = "^1.0.0", -- use version <2.0.0 to avoid breaking changes
+        build = ":UpdateRemotePlugins",
+        init = function()
+            vim.keymap.set(
+                "n",
+                "<leader>ee",
+                ":MoltenEvaluateLine<CR>",
+                { silent = true }
+            )
+
+            vim.keymap.set(
+                "v",
+                "<leader>ee",
+                ":MoltenEvaluateLine<CR>",
+                { silent = true }
+            )
+            -- this is an example, not a default. Please see the readme for more configuration options
+            vim.g.molten_output_win_max_height = 12
+        end,
+    },
 })

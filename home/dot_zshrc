@@ -94,3 +94,10 @@ export MODULAR_HOME="/home/pants/.modular"
 export PATH="/home/pants/.modular/pkg/packages.modular.com_mojo/bin:$PATH"
 
 . "$HOME/.cargo/env"
+
+# bun completions
+[ -s "/home/pants/.oh-my-zsh/completions/_bun" ] && source "/home/pants/.oh-my-zsh/completions/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
