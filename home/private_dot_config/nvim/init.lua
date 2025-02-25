@@ -53,7 +53,7 @@ vim.opt.hidden = true
 
 -- search buffers
 -- quick-save
-vim.keymap.set('n', '<leader>w', '<cmd>w<cr>')
+vim.keymap.set('n', '<leader>ww', '<cmd>w<cr>')
 -- jk as Esc
 vim.keymap.set('i', 'jk', '<Esc>')
 vim.keymap.set('i', 'Jk', '<Esc>')
@@ -99,43 +99,6 @@ vim.opt.rtp:prepend(lazypath)
 -- actual plugins
 require("lazy").setup({
     {
-        "zaldih/themery.nvim",
-        config = function()
-            require("themery").setup({
-                themes = {"gruber-darker", "pantsbox", "modus_vivendi", "retrobox", "melange", "catppuccin", "tokyonight-night", "edge", "quiet"}, -- Your list of installed colorschemes
-                livePreview = true, -- Apply theme while browsing. Default to true.
-            })
-            vim.keymap.set("n", "<leader>tt", ":Themery<CR>", {silent=true})
-            require("theme")
-        end,
-    },
-    {
-        "sainnhe/edge",
-        lazy = false,
-        priority = 1000,
-        opts = {},
-    },
-    {
-        "folke/tokyonight.nvim",
-        lazy = false,
-        priority = 1000,
-        opts = {},
-    },
-    {
-        "savq/melange-nvim",
-    },
-    {
-        "catppuccin/nvim",
-        name = "catppuccin",
-        opts = {
-            flavour = "mocha",
-        },
-        priority = 1000
-    },
-    {
-        "blazkowolf/gruber-darker.nvim",
-    },
-    {
         "pants721/pantsbox",
         config = function()
             require("pantsbox").setup {
@@ -145,6 +108,9 @@ require("lazy").setup({
     },
     {
         "pants721/pants-modus.nvim",
+        config = function()
+            vim.cmd("colorscheme modus_vivendi")
+        end,
     },
     -- git
     {
@@ -177,14 +143,6 @@ require("lazy").setup({
         config = function()
             -- Setup language servers.
 
-            local lspconfig = require('lspconfig')
-            -- lspconfig.ccls.setup {
-            --     init_options = {
-            --         cache = {
-            --             directory = ".ccls-cache"
-            --         },
-            --     },
-            -- }
             require("mason").setup()
             require("mason-lspconfig").setup()
             require("mason-lspconfig").setup_handlers {
@@ -366,8 +324,18 @@ require("lazy").setup({
     },
     -- find some files
     {
-        "nvim-telescope/telescope-file-browser.nvim",
-        dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
+        'stevearc/oil.nvim',
+        ---@module 'oil'
+        ---@type oil.SetupOpts
+        opts = {},
+        -- Optional dependencies
+        dependencies = { { "echasnovski/mini.icons", opts = {} } },
+        -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
+        -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
+        lazy = false,
+        keys = {
+            { "<leader>oo", "<cmd>Oil<cr>", desc = "Oil" },
+        },
     },
     {
         'nvim-telescope/telescope-fzf-native.nvim',
@@ -423,7 +391,6 @@ require("lazy").setup({
                     },
                 },
             }
-            require("telescope").load_extension "file_browser"
             local builtin = require("telescope.builtin")
             local themes = require('telescope.themes')
             require("telescope").load_extension("undo")
@@ -570,12 +537,6 @@ require("lazy").setup({
     --     cmd = "Copilot",
     --     event = "InsertEnter",
     -- },
-    {
-        "max397574/better-escape.nvim",
-        config = function()
-            require("better_escape").setup()
-        end,
-    },
     { 'brenoprata10/nvim-highlight-colors', config = true },
     {
         "smjonas/inc-rename.nvim",
@@ -676,25 +637,7 @@ require("lazy").setup({
     --     opts = {},
     -- },
     {
-        "benlubas/molten-nvim",
-        version = "^1.0.0", -- use version <2.0.0 to avoid breaking changes
-        build = ":UpdateRemotePlugins",
-        init = function()
-            vim.keymap.set(
-                "n",
-                "<leader>ee",
-                ":MoltenEvaluateLine<CR>",
-                { silent = true }
-            )
-
-            vim.keymap.set(
-                "v",
-                "<leader>ee",
-                ":MoltenEvaluateLine<CR>",
-                { silent = true }
-            )
-            -- this is an example, not a default. Please see the readme for more configuration options
-            vim.g.molten_output_win_max_height = 12
-        end,
+        'pteroctopus/faster.nvim',
+        opts = {}
     },
 })
