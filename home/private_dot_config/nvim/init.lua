@@ -1,6 +1,5 @@
 -- super based off of jon gjengset's vim config https://github.com/jonhoo/configs
 -- vim.cmd "colorscheme retrobox"
-
 -- set leader
 vim.keymap.set("n", "<Space>", "<Nop>", { silent = true })
 vim.g.mapleader = " "
@@ -104,12 +103,12 @@ require("lazy").setup({
             require("pantsbox").setup {
                 contrast = "hard",
             }
+	    vim.cmd("colorscheme pantsbox")
         end,
     },
     {
         "pants721/pants-modus.nvim",
         config = function()
-            vim.cmd("colorscheme modus_vivendi")
         end,
     },
     -- git
