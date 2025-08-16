@@ -109,6 +109,7 @@ require("lazy").setup({
     {
         "pants721/pants-modus.nvim",
         config = function()
+	    -- vim.cmd("colorscheme modus_vivendi")
         end,
     },
     -- git
@@ -350,9 +351,9 @@ require("lazy").setup({
         config = function()
             require("telescope").setup {
                 defaults = {
-                    layout_config = {
-                        height = 15,
-                    },
+                    -- layout_config = {
+                    --     height = 15,
+                    -- },
                     mappings = {
                         i = {
                             ["<Tab>"] = require("telescope.actions").move_selection_next,
@@ -399,12 +400,16 @@ require("lazy").setup({
                 }
             }
             -- vim.keymap.set("n", "<leader>fj", ":Telescope file_browser path=%:p:h select_buffer=true<CR>", {silent=true})
-            vim.keymap.set("n", "<leader>fj",
-                function() require "telescope".extensions.file_browser.file_browser(themes.get_ivy(opts)) end, {})
-            vim.keymap.set("n", "<leader>ff", function() builtin.find_files(themes.get_ivy(opts)) end, {})
-            vim.keymap.set("n", "<leader>fs", function() builtin.live_grep(themes.get_ivy(opts)) end, {})
-            vim.keymap.set("n", "<leader>fb", function() builtin.buffers(themes.get_ivy(opts)) end, {})
-            vim.keymap.set('n', '<leader>fh', function() builtin.help_tags(themes.get_ivy(opts)) end, {})
+            -- vim.keymap.set("n", "<leader>fj",
+            --     function() require "telescope".extensions.file_browser.file_browser(themes.get_ivy(opts)) end, {})
+            -- vim.keymap.set("n", "<leader>ff", function() builtin.find_files(themes.get_ivy(opts)) end, {})
+            -- vim.keymap.set("n", "<leader>fs", function() builtin.live_grep(themes.get_ivy(opts)) end, {})
+            -- vim.keymap.set("n", "<leader>fb", function() builtin.buffers(themes.get_ivy(opts)) end, {})
+            -- vim.keymap.set('n', '<leader>fh', function() builtin.help_tags(themes.get_ivy(opts)) end, {})
+            vim.keymap.set("n", "<leader>ff", function() builtin.find_files() end, {})
+            vim.keymap.set("n", "<leader>fs", function() builtin.live_grep() end, {})
+            vim.keymap.set("n", "<leader>fb", function() builtin.buffers() end, {})
+            vim.keymap.set('n', '<leader>fh', function() builtin.help_tags() end, {})
         end
     },
     -- inline function signatures
@@ -560,7 +565,7 @@ require("lazy").setup({
                 component_separators = { left = '', right = ''},
                 section_separators = { left = '', right = ''},
                 globalstatus = true,
-                -- theme = "powerline",
+                theme = "powerline",
             }
         }
     },
@@ -629,6 +634,13 @@ require("lazy").setup({
         opts = {},
         dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
 
+    },
+    {
+        "tadmccorkle/markdown.nvim",
+        event = "VeryLazy",
+        opts = {
+            -- configuration here or empty for defaults
+        },
     },
     -- {
     --     'm4xshen/hardtime.nvim',

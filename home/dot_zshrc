@@ -83,7 +83,7 @@ alias cz="chezmoi"
 eval "$(zoxide init zsh)"
 alias lg="lazygit"
 alias bm="bashmount"
-alias hx="helix"
+# alias hx="helix"
 
 eval "$(register-python-argcomplete pipx)"
 

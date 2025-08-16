@@ -1,7 +1,7 @@
 set $mod Mod4
-font pango:firacodenerdfont 12
+font pango:jetbrainsmono nerd font 12
 
-default_orientation vertical
+default_orientation horizontal
 for_window [class=".*"] split toggle
 # Start XDG autostart .desktop files using dex. See also
 # https://wiki.archlinux.org/index.php/XDG_Autostart
@@ -38,13 +38,14 @@ bindsym $mod+Return exec wezterm
 bindsym $mod+e exec emacs
 
 # start a browser
-bindsym $mod+backslash exec firefox
+# bindsym $mod+backslash exec firefox
+bindsym $mod+backslash exec chromium-browser
 
 # kill focused window
 bindsym $mod+Shift+q kill
 
-# bindcode $mod+40 exec "rofi -modi drun,run -show drun"
-bindcode $mod+40 exec "dmenu_run"
+bindcode $mod+40 exec "rofi -modi drun,run -show drun"
+# bindcode $mod+40 exec "dmenu_run"
 
 # change focus
 bindsym $mod+h focus left
@@ -188,7 +189,7 @@ bindsym XF86AudioNext exec playerctl next
 # exec --no-startup-id nitrogen --set-scaled ~/Pictures/spiderman.png
 exec --no-startup-id nitrogen --restore
 exec xinput --set-prop 11 'libinput Accel Speed' 0.5
-exec_always --no-startup-id picom --fade-in-step=1 --fade-out-step=1 --fade-delta=0 --config ~/.config/picom.conf
+exec_always --no-startup-id picom --vsync --fade-in-step=1 --fade-out-step=1 --fade-delta=0 --config ~/.config/picom.conf
 
 # lock
 bindsym $mod+Shift+w exec betterlockscreen --lock dim
@@ -196,7 +197,7 @@ bindsym $mod+Shift+w exec betterlockscreen --lock dim
 # gaps inner 1
 # gaps outer 1
 
-for_window [class=".*"] border pixel 1
+for_window [class=".*"] border pixel 1.0
 
 smart_borders on
 bindsym --release $mod+Shift+s exec import ~/screenshot.png
