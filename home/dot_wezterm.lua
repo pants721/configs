@@ -5,7 +5,12 @@ local config = wezterm.config_builder()
 config.default_prog = { '/bin/zsh', '-l', '-c', 'tmux attach || tmux' }
 
 config.font = wezterm.font {
-    family = 'jetbrainsmono nerd font',
+    -- family = 'jetbrainsmono nerd font',
+    -- family = 'BigBlue TerminalPlus',
+    -- family = 'FixedsysTTF',
+    family = 'miracode',
+    -- family = 'roboto mono',
+    -- weight = 'Bold',
     -- family = 'firacode nerd font',
     -- family = 'Iosevka Nerd Font',
     -- family = 'hack nerd font',
