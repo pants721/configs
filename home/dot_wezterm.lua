@@ -5,19 +5,27 @@ local config = wezterm.config_builder()
 config.default_prog = { '/bin/zsh', '-l', '-c', 'tmux attach || tmux' }
 
 config.font = wezterm.font {
+    family = 'Berkeley Mono',
+    -- family = 'ioskeley mono',
+    -- family = 'martian mono',
     -- family = 'jetbrainsmono nerd font',
+    -- family = 'hack nerd font',
+    -- family = 'miracode',
+    -- weight = 'Bold',
+
     -- family = 'BigBlue TerminalPlus',
     -- family = 'FixedsysTTF',
-    family = 'miracode',
+    -- family = 'google sans code',
+    -- family = 'cascadia code nf',
     -- family = 'roboto mono',
-    -- weight = 'Bold',
     -- family = 'firacode nerd font',
     -- family = 'Iosevka Nerd Font',
-    -- family = 'hack nerd font',
+    -- family = 'ibm plex mono',
     harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' },
 }
 -- config.freetype_load_flags = 'NO_HINTING'
-config.font_size = 14
+config.font_size = 18
+config.underline_thickness = 0
 config.enable_tab_bar = false
 
 config.color_scheme = 'GitHub Dark'
