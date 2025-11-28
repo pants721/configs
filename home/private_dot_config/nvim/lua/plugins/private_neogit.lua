@@ -1,5 +1,10 @@
 return {
     "NeogitOrg/neogit",
+    cmd = "Neogit",
+    keys = {
+        { "<leader>gg", "<cmd>Neogit<cr>", desc = "Neogit" },
+        { "<leader>gc", "<cmd>Neogit commit<cr>", desc = "Neogit commit" },
+    },
     dependencies = {
         "nvim-lua/plenary.nvim",
         "sindrets/diffview.nvim",
@@ -13,9 +18,5 @@ return {
         require('diffview').setup {
             use_icons = false,
         }
-
-        -- Keymaps
-        vim.keymap.set('n', '<leader>gg', "<cmd>Neogit<cr>", { silent = true })
-        vim.keymap.set('n', '<leader>gc', "<cmd>Neogit commit<cr>", { silent = true })
     end
 }

@@ -1,5 +1,7 @@
 return {
     'nvim-treesitter/nvim-treesitter',
+    event = { "BufReadPost", "BufNewFile" },
+    cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
     dependencies = {
         'windwp/nvim-ts-autotag',
         "nvim-treesitter/nvim-treesitter-textobjects",

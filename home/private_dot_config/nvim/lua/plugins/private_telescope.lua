@@ -1,5 +1,14 @@
 return {
     'nvim-telescope/telescope.nvim',
+    cmd = "Telescope",
+    keys = {
+        { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find files" },
+        { "<leader>fg", "<cmd>Telescope git_files<cr>", desc = "Find git files" },
+        { "<leader>fs", "<cmd>Telescope live_grep<cr>", desc = "Live grep" },
+        { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
+        { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help tags" },
+        { "<leader>fj", "<cmd>Telescope file_browser path=%:p:h select_buffer=true<cr>", desc = "File browser" },
+    },
     dependencies = {
         'nvim-lua/plenary.nvim',
         "debugloop/telescope-undo.nvim",
@@ -54,29 +63,7 @@ return {
             },
         }
 
-        local builtin = require("telescope.builtin")
-        local themes = require('telescope.themes')
         require("telescope").load_extension("undo")
         require('telescope').load_extension('themes')
-
-        local opts = {
-            layout_config = {
-                height = 15,
-            }
-        }
-
-        -- Keymaps
-        vim.keymap.set("n", "<leader>fj", "<cmd>Telescope file_browser path=%:p:h select_buffer=true<CR>", {silent=true})
-        -- vim.keymap.set("n", "<leader>fj",
-        --     function() require "telescope".extensions.file_browser.file_browser(themes.get_ivy(opts)) end, {})
-        -- vim.keymap.set("n", "<leader>ff", function() builtin.find_files(themes.get_ivy(opts)) end, {})
-        -- vim.keymap.set("n", "<leader>fs", function() builtin.live_grep(themes.get_ivy(opts)) end, {})
-        -- vim.keymap.set("n", "<leader>fb", function() builtin.buffers(themes.get_ivy(opts)) end, {})
-        -- vim.keymap.set('n', '<leader>fh', function() builtin.help_tags(themes.get_ivy(opts)) end, {})
-        vim.keymap.set("n", "<leader>ff", function() builtin.find_files() end, {})
-        vim.keymap.set("n", "<leader>fg", function() builtin.git_files() end, {})
-        vim.keymap.set("n", "<leader>fs", function() builtin.live_grep() end, {})
-        vim.keymap.set("n", "<leader>fb", function() builtin.buffers() end, {})
-        vim.keymap.set('n', '<leader>fh', function() builtin.help_tags() end, {})
     end
 }
