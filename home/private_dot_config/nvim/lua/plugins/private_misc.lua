@@ -1,6 +1,14 @@
 return {
     -- Simple plugins with minimal config
     {
+        "pants721/orca.nvim",
+        config = function ()
+            local orca = require("orca")
+            orca.setup()
+            vim.keymap.set("n", "<leader>o", function () orca:toggle_orca() end)
+        end
+    },
+    {
         'numToStr/Comment.nvim',
         opts = {},
         lazy = false,
@@ -36,7 +44,7 @@ return {
 
             -- Keymaps
             vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end, { desc = "Harpoon add file" })
-            vim.keymap.set("n", "<leader>e", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = "Harpoon menu" })
+            vim.keymap.set("n", "C-e", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = "Harpoon menu" })
 
             vim.keymap.set("n", "<leader>1", function() harpoon:list():select(1) end, { desc = "Harpoon file 1" })
             vim.keymap.set("n", "<leader>2", function() harpoon:list():select(2) end, { desc = "Harpoon file 2" })

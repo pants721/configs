@@ -27,6 +27,25 @@ return {
                 }
             end
 
+            vim.lsp.config['lua_ls'] = {
+                settings = {
+                    Lua = {
+                        diagnostics = {
+                            globals = { "vim" },
+                        },
+                        workspace = {
+                            library = vim.list_extend(
+                                vim.api.nvim_get_runtime_file("", true),
+                                { "~/dev/orca.nvim/lua" }  -- <- add your dev plugin here
+                            ),
+                        },
+                        completion = {
+                            callSnippet = 'Replace',
+                        },
+                    },
+                },
+            }
+
             -- LSP attach autocommand for keymaps
             vim.api.nvim_create_autocmd('LspAttach', {
                 group = vim.api.nvim_create_augroup('UserLspConfig', {}),
@@ -59,5 +78,35 @@ return {
                 end,
             })
         end
+    },
+    {
+        "folke/lazydev.nvim",
+        ft = "lua", -- only load on lua files
+        opts = {
+            settings = {
+                Lua = {
+                    diagnostics = {
+                        ignoredFiles = 'Enable',
+                        groupFileStatus = {
+                            ambiguity = 'Any',
+                            await = 'Any',
+                            duplicate = 'Any',
+                            global = 'Any',
+                            luadoc = 'Any',
+                            redefined = 'Any',
+                            strict = 'Any',
+                            ['type-check'] = 'Any',
+                            unbalanced = 'Any',
+                            unused = 'Any',
+                        },
+                    },
+                },
+            },
+            library = {
+                -- See the configuration section for more details
+                -- Load luvit types when the `vim.uv` word is found
+                { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+            },
+        },
     },
 }
